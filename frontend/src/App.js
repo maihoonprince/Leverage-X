@@ -9,6 +9,7 @@ import RefrshHandler from './RefrshHandler';
 import Navbar from './components/Navbar'; // Import your Navbar
 import WatchList from './pages/WatchList';
 import PnL from './pages/PnL';
+import Footer from './components/Footer';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ function App() {
         <Route path='/pnl' element={<PrivateRoute element={<PnL />} />} />
 
       </Routes>
+      <Footer/>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/Home.css';
 import Navbar from '../components/Navbar';
+import homeImage from "../Assets/home page.png";
 
 const Home = () => {
     return (
@@ -22,7 +23,7 @@ const Home = () => {
                     </div>
                 </div>
                 <div className="header-image">
-                    <img src="phone-mockup.png" alt="Trading App" />
+                    <img src={homeImage} alt="Trading App" />
                 </div>
             </header>
 
@@ -68,10 +69,10 @@ const Home = () => {
             {/* Membership Plans Section */}
             <section className="membership-plans" id="plans">
                 <h2>Membership Plans</h2>
-                <div className="plan-tabs">
+                {/* <div className="plan-tabs">
                     <button className="tab active">Evaluation</button>
                     <button className="tab">Rapid</button>
-                </div>
+                </div> */}
                 <table className="plans-table">
                     <thead>
                         <tr>
@@ -137,7 +138,7 @@ const Home = () => {
             </section>
 
             {/* Footer */}
-            <footer className="footer">
+            {/* <footer className="footer">
                 <div className="footer-content">
                     <p>At Upper Circuit, we believe that all skilled traders should be rewarded.</p>
                     <ul className="footer-links">
@@ -155,7 +156,7 @@ const Home = () => {
                 <div className="footer-note">
                     <p>&copy; 2024 Upper Circuit. All rights reserved.</p>
                 </div>
-            </footer>
+            </footer> */}
         </div>
     );
 };
