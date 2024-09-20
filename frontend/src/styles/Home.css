@@ -1,0 +1,180 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #0d0d23;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.home-container {
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #1a1a3f;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.language-btn, .language-select {
+    background: #1a1a3f;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 0;
+}
+
+.header-content h1 {
+    font-size: 36px;
+    line-height: 1.5;
+}
+
+.header-content p {
+    margin: 20px 0;
+    line-height: 1.8;
+}
+
+.header-buttons .btn {
+    padding: 10px 20px;
+    margin-right: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.know-more {
+    background-color: #ff914d;
+    color: white;
+}
+
+.buy-now {
+    background-color: #ffbe4d;
+    color: white;
+}
+
+.header-image img {
+    width: 350px;
+}
+
+/* Features */
+.features {
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 0;
+    background-color: #1a1a3f;
+}
+
+.feature-item {
+    text-align: center;
+}
+
+.feature-item h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* How it works */
+.how-it-works {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.how-it-works h2 {
+    font-size: 32px;
+    margin-bottom: 40px;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-around;
+}
+
+.step {
+    width: 30%;
+}
+
+/* Membership Plans */
+.membership-plans {
+    padding: 60px 0;
+}
+
+.plan-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.plan-tabs .tab {
+    background-color: #1a1a3f;
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+    color: white;
+}
+
+.tab.active {
+    background-color: #ff914d;
+}
+
+.plans-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.plans-table th, .plans-table td {
+    padding: 10px 20px;
+    text-align: left;
+    border: 1px solid #fff;
+}
+
+/* Footer */
+.footer {
+    padding: 60px 0;
+    background-color: #1a1a3f;
+    text-align: center;
+}
+
+.footer-links, .footer-policies {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li, .footer-policies li {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.footer-links a, .footer-policies a {
+    text-decoration: none;
+    color: #fff;
+}
