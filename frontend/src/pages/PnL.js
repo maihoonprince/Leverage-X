@@ -1,7 +1,11 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom'; // Import useLocation
 import "../styles/PnL.css";
 
-const PnL = ({ selectedOption, currentPrice, quantity, investedAmount, updatedBalance, handleSell }) => {
+const PnL = () => {
+  const location = useLocation();
+  const { selectedOption, currentPrice, quantity, investedAmount, updatedBalance } = location.state || {}; // Access passed state
+
   return (
     <div className="pnl-container">
       <h1>Profit & Loss</h1>
@@ -14,7 +18,7 @@ const PnL = ({ selectedOption, currentPrice, quantity, investedAmount, updatedBa
         <p>Invested: ₹{investedAmount ? investedAmount.toFixed(2) : 'N/A'}</p>
 
         {/* Sell Button */}
-        <button className="sell-btn" onClick={handleSell} disabled={!selectedOption}>
+        <button className="sell-btn" disabled={!selectedOption}>
           Sell
         </button>
       </div>

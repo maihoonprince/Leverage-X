@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import TradingViewWidget from '../components/TradingView';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
 const WatchList = () => {
@@ -9,28 +10,24 @@ const WatchList = () => {
   const [quantity, setQuantity] = useState(1); // Default quantity for purchasing stocks
   const [investedAmount, setInvestedAmount] = useState(0); // Amount invested in the stock
   const [updatedBalance, setUpdatedBalance] = useState(10000); // User's updated balance after purchasing
-  const [selectedSymbol, setSelectedSymbol] = useState("NASDAQ:AAPL"); // Default symbol for chart
+  const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSD"); // Default symbol for chart
+  
+  const navigate = useNavigate(); // Initialize navigate
 
   const options = [
-    { name: 'Option 1', price: 1000, symbol: 'NASDAQ:AAPL' }, // Apple stock
-    { name: 'Option 2', price: 1002, symbol: 'BINANCE:BTCUSD' }, // Bitcoin
+    { name: 'Option 1', price: 1000, symbol: 'BINANCE:BTCUSD' }, // Bitcoin
+    { name: 'Option 2', price: 1002, symbol: 'BINANCE:SOLUSDT' }, // Solana
     { name: 'Option 3', price: 1020, symbol: 'BINANCE:ETHUSD' }, // Ethereum
   ];
 
   const handleBuyClick = (option) => {
+    const maxQuantity = Math.floor(currentBalance / option.price); // Calculate max quantity the user can buy
     setSelectedOption(option);
     setSelectedSymbol(option.symbol); // Set the selected symbol for the TradingView chart
-    setQuantity(1); // Default quantity to 1 when a stock is selected
-    setInvestedAmount(option.price); // Set invested amount based on price and quantity
-    setUpdatedBalance(currentBalance - option.price); // Update balance after purchasing
+    setQuantity(maxQuantity); // Set quantity to maximum value the user can afford
+    setInvestedAmount(option.price * maxQuantity); // Set invested amount based on price and max quantity
+    setUpdatedBalance(currentBalance - option.price * maxQuantity); // Update balance after purchasing
     setShowPopup(true); // Show the purchase popup modal
-  };
-
-  const handleQuantityChange = (e) => {
-    const qty = Number(e.target.value);
-    setQuantity(qty);
-    setInvestedAmount(selectedOption.price * qty); // Update invested amount when quantity changes
-    setUpdatedBalance(currentBalance - selectedOption.price * qty); // Update balance based on quantity
   };
 
   const handleBuy = () => {
@@ -39,13 +36,18 @@ const WatchList = () => {
     } else {
       setCurrentBalance(updatedBalance); // Deduct the invested amount from current balance
       setShowPopup(false); // Close the popup after purchasing
-    }
-  };
 
-  const handleSell = () => {
-    const sellAmount = selectedOption.price * quantity;
-    setCurrentBalance(currentBalance + sellAmount); // Add the sale amount back to current balance
-    alert(`Sold ${quantity} of ${selectedOption.name} for ₹${sellAmount.toFixed(2)}`);
+      // Redirect to PnL page with the required data
+      navigate('/pnl', {
+        state: {
+          selectedOption: selectedOption,
+          quantity: quantity,
+          investedAmount: investedAmount,
+          updatedBalance: updatedBalance,
+          currentPrice: selectedOption.price, // Pass the current price
+        }
+      });
+    }
   };
 
   return (
@@ -77,11 +79,9 @@ const WatchList = () => {
               <input
                 type="number"
                 value={quantity}
-                min="1"
-                max={Math.floor(currentBalance / selectedOption.price)}
-                onChange={handleQuantityChange}
+                disabled // Disable input so user can't change the quantity
               />
-              <p>Max: {Math.floor(currentBalance / selectedOption.price)}</p>
+              <p>Max Quantity: {quantity}</p>
             </div>
             <p>Invested: ₹{investedAmount.toFixed(2)}</p>
             <p>Updated Balance: ₹{updatedBalance.toFixed(2)}</p>
@@ -95,21 +95,8 @@ const WatchList = () => {
 
       {/* Main content for the chart */}
       <div className="main-content">
-        <TradingViewWidget symbol={selectedSymbol} />
+        <TradingView symbol={selectedSymbol} />
       </div>
-
-      {/* PnL Section */}
-      {/* {selectedOption && (
-        <div className="pnl-section">
-          <h3>Profit & Loss</h3>
-          <p>Selected Stock: {selectedOption.name}</p>
-          <p>Invested: ₹{investedAmount.toFixed(2)}</p>
-          <p>Quantity: {quantity}</p>
-          <p>Current Price: ₹{selectedOption.price.toFixed(2)}</p>
-          <p>Total Balance: ₹{currentBalance.toFixed(2)}</p>
-          <button className="sell-btn" onClick={handleSell}>Sell Stock</button>
-        </div>
-      )} */}
     </div>
   );
 };

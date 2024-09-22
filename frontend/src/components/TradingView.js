@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, memo } from 'react';
 
-function TradingViewWidget() {
+function TradingView() {
   const container = useRef();
 
   useEffect(() => {
@@ -13,13 +13,14 @@ function TradingViewWidget() {
       script.innerHTML = `
         {
           "autosize": true,
-          "symbol": "NASDAQ:AAPL",
-          "interval": "D",
+          "symbol": "BINANCE:BTCUSDT",
+          "interval": "1",
           "timezone": "Etc/UTC",
           "theme": "dark",
           "style": "1",
           "locale": "en",
-          "allow_symbol_change": true,
+          "hide_legend": true,
+          "allow_symbol_change": false,
           "calendar": false,
           "support_host": "https://www.tradingview.com"
         }`;
@@ -39,4 +40,4 @@ function TradingViewWidget() {
   );
 }
 
-export default memo(TradingViewWidget);
+export default memo(TradingView);
