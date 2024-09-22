@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const AuthRouter = require('./Routes/AuthRouter');
 const ProductRouter = require('./Routes/ProductRouter');
+const pnlRoutes = require("./Routes/PnLRoutes.js");
 
 require('dotenv').config();
 require('./Models/db');
@@ -15,8 +16,11 @@ app.get('/ping', (req, res) => {
 
 app.use(bodyParser.json());
 app.use(cors());
+
 app.use('/auth', AuthRouter);
 app.use('/products', ProductRouter);
+
+app.use('/api/pnl', pnlRoutes);
 
 
 app.listen(PORT, () => {
