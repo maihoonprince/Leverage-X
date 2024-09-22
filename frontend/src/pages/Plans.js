@@ -27,61 +27,41 @@ function Plans() {
       <table className="plans-table">
         <thead>
           <tr>
+            <th>Plan's</th>
             <th>Trading Balance</th>
             <th>Minimum Trading Days</th>
-            <th>Maximum Daily Loss</th>
-            <th>Maximum Total Loss</th>
-            <th>Phase 1 Profit Target</th>
-            <th>Phase 2 Profit Target</th>
-            <th>Prime Account Prize Money</th>
-            <th>Trading Period</th>
-            <th>Price</th>
+            <th>Margin</th>
+            <th>Plan Cost</th>
+            <th>Button</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>5,00,000</td>
+            <td>Plan 1</td>
+            <td>10,000</td>
             <td>5 Days</td>
-            <td>25,000</td>
-            <td>50,000</td>
-            <td>50,000</td>
-            <td>25,000</td>
-            <td>75%</td>
-            <td>5 Days</td>
+            <td>10 X</td>
+            <td>1000</td>
             <td><button className="buy-now-btn">Buy Now</button></td>
           </tr>
           <tr>
-            <td>5,00,000</td>
-            <td>5 Days</td>
-            <td>25,000</td>
+            <td>Plan 2</td>
             <td>50,000</td>
-            <td>50,000</td>
-            <td>25,000</td>
-            <td>75%</td>
             <td>5 Days</td>
+            <td>10 X</td>
+            <td>5000</td>
             <td><button className="buy-now-btn">Buy Now</button></td>
           </tr>
           <tr>
-            <td>5,00,000</td>
+            <td>Plan 3</td>
+            <td>1,00,000</td>
             <td>5 Days</td>
-            <td>25,000</td>
-            <td>50,000</td>
-            <td>50,000</td>
-            <td>25,000</td>
-            <td>75%</td>
-            <td>5 Days</td>
+            <td>10 X</td>
+            <td>10,000</td>
             <td><button className="buy-now-btn">Buy Now</button></td>
           </tr>
         </tbody>
       </table>
-      <footer className="footer">
-        <p>© 2024 Upper Circuit. All Rights Reserved.</p>
-        <div className="footer-links">
-          <a href="/terms">Terms & Conditions</a>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/refund">Refund Policy</a>
-        </div>
-      </footer>
     </div>
             <ToastContainer />
         </div>
