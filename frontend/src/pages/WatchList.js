@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TradingViewWidget from '../components/TradingView';
 import '../styles/WatchList.css';
 
 const WatchList = () => {
@@ -8,15 +9,17 @@ const WatchList = () => {
   const [quantity, setQuantity] = useState(1); // Default quantity for purchasing stocks
   const [investedAmount, setInvestedAmount] = useState(0); // Amount invested in the stock
   const [updatedBalance, setUpdatedBalance] = useState(10000); // User's updated balance after purchasing
+  const [selectedSymbol, setSelectedSymbol] = useState("NASDAQ:AAPL"); // Default symbol for chart
 
   const options = [
-    { name: 'Option 1', price: 1000 },
-    { name: 'Option 2', price: 1002 },
-    { name: 'Option 3', price: 1020 },
+    { name: 'Option 1', price: 1000, symbol: 'NASDAQ:AAPL' }, // Apple stock
+    { name: 'Option 2', price: 1002, symbol: 'BINANCE:BTCUSD' }, // Bitcoin
+    { name: 'Option 3', price: 1020, symbol: 'BINANCE:ETHUSD' }, // Ethereum
   ];
 
   const handleBuyClick = (option) => {
     setSelectedOption(option);
+    setSelectedSymbol(option.symbol); // Set the selected symbol for the TradingView chart
     setQuantity(1); // Default quantity to 1 when a stock is selected
     setInvestedAmount(option.price); // Set invested amount based on price and quantity
     setUpdatedBalance(currentBalance - option.price); // Update balance after purchasing
@@ -37,11 +40,9 @@ const WatchList = () => {
       setCurrentBalance(updatedBalance); // Deduct the invested amount from current balance
       setShowPopup(false); // Close the popup after purchasing
     }
-    // Additional logic for storing the purchase or notifying admin can go here
   };
 
   const handleSell = () => {
-    // Logic for selling the stock
     const sellAmount = selectedOption.price * quantity;
     setCurrentBalance(currentBalance + sellAmount); // Add the sale amount back to current balance
     alert(`Sold ${quantity} of ${selectedOption.name} for ₹${sellAmount.toFixed(2)}`);
@@ -77,7 +78,7 @@ const WatchList = () => {
                 type="number"
                 value={quantity}
                 min="1"
-                max={Math.floor(currentBalance / selectedOption.price)} // Limit to max possible purchase
+                max={Math.floor(currentBalance / selectedOption.price)}
                 onChange={handleQuantityChange}
               />
               <p>Max: {Math.floor(currentBalance / selectedOption.price)}</p>
@@ -93,17 +94,12 @@ const WatchList = () => {
       )}
 
       {/* Main content for the chart */}
-      <div className="chart-container">
-        <iframe
-          src="https://widget.tradingview.com/"
-          frameBorder="0"
-          className="chart"
-          title="Trading Chart"
-        ></iframe>
+      <div className="main-content">
+        <TradingViewWidget symbol={selectedSymbol} />
       </div>
 
       {/* PnL Section */}
-      {selectedOption && (
+      {/* {selectedOption && (
         <div className="pnl-section">
           <h3>Profit & Loss</h3>
           <p>Selected Stock: {selectedOption.name}</p>
@@ -113,7 +109,7 @@ const WatchList = () => {
           <p>Total Balance: ₹{currentBalance.toFixed(2)}</p>
           <button className="sell-btn" onClick={handleSell}>Sell Stock</button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

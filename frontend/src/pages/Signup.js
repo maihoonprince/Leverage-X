@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../utils';
 
+//css
+import "../styles/Signup.css"
+
 function Signup() {
 
     const [signupInfo, setSignupInfo] = useState({
@@ -55,10 +58,10 @@ function Signup() {
         }
     }
     return (
-        <div className='container'>
+        <div className='signup'>
             <h1>Signup</h1>
-            <form onSubmit={handleSignup}>
-                <div>
+            <form onSubmit={handleSignup} className='signup-form'>
+                <div className='input-data'>
                     <label htmlFor='name'>Name</label>
                     <input
                         onChange={handleChange}
@@ -69,7 +72,7 @@ function Signup() {
                         value={signupInfo.name}
                     />
                 </div>
-                <div>
+                <div className='input-data'>
                     <label htmlFor='email'>Email</label>
                     <input
                         onChange={handleChange}
@@ -79,7 +82,7 @@ function Signup() {
                         value={signupInfo.email}
                     />
                 </div>
-                <div>
+                <div className='input-data'>
                     <label htmlFor='password'>Password</label>
                     <input
                         onChange={handleChange}
@@ -89,8 +92,8 @@ function Signup() {
                         value={signupInfo.password}
                     />
                 </div>
-                <button type='submit'>Signup</button>
-                <span>Already have an account ?
+                <button className='signup-button' type='submit'>Signup</button>
+                <span className='redirect-login'>Already have an account ?
                     <Link to="/login">Login</Link>
                 </span>
             </form>
