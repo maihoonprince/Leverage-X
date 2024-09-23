@@ -15,11 +15,11 @@ function Plans() {
     useEffect(() => {
         const userId = localStorage.getItem('userId');
         
-        if (!userId) {
-            console.error("User is not logged in. Redirecting to login page.");
-            navigate('/login'); // Redirect if no userId found
-            return; // Stop further execution if user is not logged in
-        }
+        // if (!userId) {
+        //     console.error("User is not logged in. Redirecting to login page.");
+        //     navigate('/login'); // Redirect if no userId found
+        //     return; // Stop further execution if user is not logged in
+        // }
 
         setLoggedInUser(localStorage.getItem('loggedInUser') || '');
 

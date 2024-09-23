@@ -1,50 +1,46 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
 const WatchList = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [currentBalance, setCurrentBalance] = useState(10000); // User's initial balance
-  const [quantity, setQuantity] = useState(1); // Default quantity for purchasing stocks
-  const [investedAmount, setInvestedAmount] = useState(0); // Amount invested in the stock
-  const [updatedBalance, setUpdatedBalance] = useState(10000); // User's updated balance after purchasing
-  const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSD"); // Default symbol for chart
+  const [currentBalance, setCurrentBalance] = useState(10000);
+  const [quantity, setQuantity] = useState(1);
+  const [investedAmount, setInvestedAmount] = useState(0);
+  const [updatedBalance, setUpdatedBalance] = useState(10000);
   
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const options = [
-    { name: 'Option 1', price: 1000, symbol: 'BINANCE:BTCUSD' }, // Bitcoin
-    { name: 'Option 2', price: 1002, symbol: 'BINANCE:SOLUSDT' }, // Solana
-    { name: 'Option 3', price: 1020, symbol: 'BINANCE:ETHUSD' }, // Ethereum
+    { name: 'Option 1', price: 1000 },
+    { name: 'Option 2', price: 1002 },
+    { name: 'Option 3', price: 1020 },
   ];
 
   const handleBuyClick = (option) => {
-    const maxQuantity = Math.floor(currentBalance / option.price); // Calculate max quantity the user can buy
+    const maxQuantity = Math.floor(currentBalance / option.price);
     setSelectedOption(option);
-    setSelectedSymbol(option.symbol); // Set the selected symbol for the TradingView chart
-    setQuantity(maxQuantity); // Set quantity to maximum value the user can afford
-    setInvestedAmount(option.price * maxQuantity); // Set invested amount based on price and max quantity
-    setUpdatedBalance(currentBalance - option.price * maxQuantity); // Update balance after purchasing
-    setShowPopup(true); // Show the purchase popup modal
+    setQuantity(maxQuantity);
+    setInvestedAmount(option.price * maxQuantity);
+    setUpdatedBalance(currentBalance - option.price * maxQuantity);
+    setShowPopup(true);
   };
 
   const handleBuy = () => {
     if (updatedBalance < 0) {
       alert("Insufficient funds for this purchase.");
     } else {
-      setCurrentBalance(updatedBalance); // Deduct the invested amount from current balance
-      setShowPopup(false); // Close the popup after purchasing
-
-      // Redirect to PnL page with the required data
+      setCurrentBalance(updatedBalance);
+      setShowPopup(false);
       navigate('/pnl', {
         state: {
-          selectedOption: selectedOption,
-          quantity: quantity,
-          investedAmount: investedAmount,
-          updatedBalance: updatedBalance,
-          currentPrice: selectedOption.price, // Pass the current price
+          selectedOption,
+          quantity,
+          investedAmount,
+          updatedBalance,
+          currentPrice: selectedOption.price,
         }
       });
     }
@@ -68,7 +64,6 @@ const WatchList = () => {
         </div>
       </div>
 
-      {/* Popup Modal */}
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup-content">
@@ -76,11 +71,7 @@ const WatchList = () => {
             <p>Current Balance: ₹{currentBalance.toFixed(2)}</p>
             <div className="quantity-input">
               <label>Quantity: </label>
-              <input
-                type="number"
-                value={quantity}
-                disabled // Disable input so user can't change the quantity
-              />
+              <input type="number" value={quantity} disabled />
               <p>Max Quantity: {quantity}</p>
             </div>
             <p>Invested: ₹{investedAmount.toFixed(2)}</p>
@@ -93,9 +84,8 @@ const WatchList = () => {
         </div>
       )}
 
-      {/* Main content for the chart */}
       <div className="main-content">
-        <TradingView symbol={selectedSymbol} />
+        <TradingView /> {/* Ensure there's only one TradingView component here */}
       </div>
     </div>
   );
