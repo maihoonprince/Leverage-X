@@ -1,77 +1,179 @@
+/* General Layout */
 .plans-container {
-    text-align: center;
-    padding: 2rem;
-    background-color: #0b0d12; /* Dark background similar to your image */
-    color: white;
-  }
-  
-  .plans-title {
-    color: #00b4ff; /* Bright blue title color */
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.plans-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.plans-table {
+  width: 80%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.plans-table th,
+.plans-table td {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-size: 18px;
+  color: #555;
+}
+
+.plans-table th {
+  background-color: #333;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.plans-table tr:last-child td {
+  border-bottom: none;
+}
+
+.plans-table td {
+  background-color: #fff;
+}
+
+.plans-table tr:hover td {
+  background-color: #f1f1f1;
+}
+
+/* Buttons */
+.buy-now-btn {
+  padding: 12px 25px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.buy-now-btn:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.buy-now-btn.disabled {
+  background-color: grey;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Popup */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 40px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  position: relative;
+  transition: transform 0.3s ease;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.popup-content h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.popup-content p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.popup img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+}
+
+/* Popup Buttons */
+.popup .popup-btn,
+.popup .cancel-btn {
+  margin: 15px 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.popup .popup-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.popup .popup-btn:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.popup .cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.popup .cancel-btn:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .plans-table {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    border-collapse: collapse;
-    background-color: #1c1e26; /* Table background */
-    color: white;
+      width: 95%;
   }
-  
+
   .plans-table th, .plans-table td {
-    padding: 1rem;
-    border: 1px solid #333;
+      padding: 12px;
+      font-size: 16px;
   }
-  
-  .plans-table th {
-    background-color: #24262d; /* Header background color */
-    font-weight: bold;
+
+  .plans-title {
+      font-size: 28px;
   }
-  
-  .plans-table td {
-    text-align: center;
+
+  .popup-content {
+      padding: 20px;
   }
-  
-  .buy-now-btn {
-    background-color: #00d9ff; /* Bright blue button */
-    color: #0b0d12;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .buy-now-btn:hover {
-    background-color: #0089b3;
-  }
-  
-  .footer {
-    margin-top: 2rem;
-    padding: 1rem 0;
-    background-color: #171a21;
-  }
-  
-  .footer p {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-  
-  .footer-links {
-    margin-top: 0.5rem;
-  }
-  
-  .footer-links a {
-    color: #00b4ff;
-    text-decoration: none;
-    margin: 0 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .footer-links a:hover {
-    text-decoration: underline;
-  }
-  
+}

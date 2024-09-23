@@ -5,6 +5,7 @@ const cors = require('cors');
 const AuthRouter = require('./Routes/AuthRouter');
 const ProductRouter = require('./Routes/ProductRouter');
 const pnlRoutes = require("./Routes/PnLRoutes.js");
+const plansRouter = require('./Routes/plansRouter')
 
 require('dotenv').config();
 require('./Models/db');
@@ -22,6 +23,7 @@ app.use('/products', ProductRouter);
 
 app.use('/api/pnl', pnlRoutes);
 
+app.use('/api/plans', plansRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)

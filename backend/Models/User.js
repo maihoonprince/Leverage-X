@@ -45,5 +45,7 @@ const UserSchema = new Schema({
     }]
 });
 
-const UserModel = mongoose.model('users', UserSchema);
+// Use the following to avoid the OverwriteModelError:
+const UserModel = mongoose.models.User || mongoose.model('User', UserSchema);
+
 module.exports = UserModel;
