@@ -14,9 +14,10 @@ const WatchList = () => {
   const navigate = useNavigate();
 
   const options = [
-    { name: 'Option 1', price: 1000 },
-    { name: 'Option 2', price: 1002 },
-    { name: 'Option 3', price: 1020 },
+    { name: 'EUR USD.opt', price: 1000 },
+    { name: 'USD JPY.opt', price: 1002 },
+    { name: 'GBP USD.opt', price: 1020 },
+    { name: 'AUD USD.opt', price: 1020 },
   ];
 
   const handleBuyClick = (option) => {
@@ -49,7 +50,7 @@ const WatchList = () => {
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>UpperCircuit</h2>
+        <h2>Forex Exchange Option</h2>
         <div className="options">
           {options.map((option, index) => (
             <div key={index} className="option">

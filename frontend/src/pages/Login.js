@@ -26,7 +26,7 @@ function Login() {
         e.preventDefault();
         const { email, password } = loginInfo;
         if (!email || !password) {
-            return handleError("email and password are required");
+            return handleError("Email and password are required");
         }
         try {
             // const url = `https://deploy-mern-app-1-api.vercel.app/auth/login`;
@@ -39,18 +39,16 @@ function Login() {
                 body: JSON.stringify(loginInfo),
             });
             const result = await response.json();
-            const { success, message, jwtToken, fullName, error } = result;
+            const { success, message, jwtToken, fullName, userId } = result;  // Include _id
             if (success) {
                 handleSuccess(message);
                 localStorage.setItem("token", jwtToken);
                 localStorage.setItem("loggedInUser", fullName); // Store fullName in localStorage
+                localStorage.setItem("userId", userId);  // Store userId in localStorage
                 setTimeout(() => {
                     navigate("/plans");
                 }, 1000);
-            } else if (error) {
-                const details = error?.details[0].message;
-                handleError(details);
-            } else if (!success) {
+            } else {
                 handleError(message);
             }
             console.log(result);
@@ -87,7 +85,7 @@ function Login() {
                     Login
                 </button>
                 <span className="redirect-signup">
-                    Does't have an account ?<Link to="/signup">Signup</Link>
+                    Doesn't have an account? <Link to="/signup">Signup</Link>
                 </span>
             </form>
             <ToastContainer />

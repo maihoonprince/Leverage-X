@@ -34,7 +34,7 @@ const UserSchema = new Schema({
     },
     plan: {
         type: String,
-        enum: ['Plan1', 'Plan2', 'Plan3'],
+        enum: ['Rapid', 'Evolution', 'Prime'],
         default: null
     },
     stocks: [{

@@ -11,6 +11,8 @@ import WatchList from './pages/WatchList';
 import PnL from './pages/PnL';
 import Footer from './components/Footer';
 
+import AdminDashboard from "./pages/Dashboard"
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('loggedInUser'));
@@ -54,6 +56,8 @@ function App() {
         <Route path='/plans' element={<PrivateRoute element={<Plans />} />} />
         <Route path='/watchlist' element={<PrivateRoute element={<WatchList />} />} />
         <Route path='/pnl' element={<PrivateRoute element={<PnL />} />} />
+
+        <Route path="/dashboard" element={<AdminDashboard />} />
       </Routes>
       <Footer/>
     </div>

@@ -6,22 +6,20 @@ import { ToastContainer } from 'react-toastify';
 import "../styles/Plans.css";
 
 function Plans() {
-    const [loggedInUser, setLoggedInUser] = useState('');
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
     const [userPlan, setUserPlan] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId'); // Fetch userId here
         
-        // if (!userId) {
-        //     console.error("User is not logged in. Redirecting to login page.");
-        //     navigate('/login'); // Redirect if no userId found
-        //     return; // Stop further execution if user is not logged in
-        // }
-
-        setLoggedInUser(localStorage.getItem('loggedInUser') || '');
+        if (!token) {
+            console.error("User is not logged in. Redirecting to login page.");
+            navigate('/login');
+            return;
+        }
 
         const fetchUserPlan = async () => {
             try {
@@ -37,15 +35,6 @@ function Plans() {
         fetchUserPlan();
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('loggedInUser');
-        handleSuccess('User Logged out');
-        setTimeout(() => {
-            navigate('/login');
-        }, 1000);
-    };
-
     const buyPlan = (plan) => {
         if (userPlan === plan) {
             alert('You already used this Plan');
@@ -57,7 +46,7 @@ function Plans() {
 
     const handlePayment = async () => {
         try {
-            const userId = localStorage.getItem('userId'); 
+            const userId = localStorage.getItem('userId'); // Fetch userId here again for payment
             const response = await axios.post('http://localhost:8080/api/plans/purchase', { userId, plan: selectedPlan });
 
             if (response.status === 200) {
@@ -85,13 +74,13 @@ function Plans() {
                     </tr>
                 </thead>
                 <tbody>
-                    {['Plan1', 'Plan2', 'Plan3'].map((plan, index) => (
+                    {['Rapid', 'Evolution', 'Prime'].map((plan, index) => (
                         <tr key={index}>
                             <td>{plan}</td>
-                            <td>{plan === 'Plan1' ? '10,000' : plan === 'Plan2' ? '50,000' : '1,00,000'}</td>
+                            <td>{plan === 'Rapid' ? '10,000' : plan === 'Evolution' ? '50,000' : '1,00,000'}</td>
                             <td>5 Days</td>
                             <td>10X</td>
-                            <td>{plan === 'Plan1' ? '1000' : plan === 'Plan2' ? '5000' : '10,000'}</td>
+                            <td>{plan === 'Rapid' ? '1000' : plan === 'Evolution' ? '5000' : '10,000'}</td>
                             <td>
                                 <button
                                     className={userPlan === plan ? "disabled-btn" : "buy-now-btn"}
@@ -111,7 +100,7 @@ function Plans() {
                 <div className="popup-overlay">
                     <div className="popup">
                         <h2>Pay for {selectedPlan}</h2>
-                        <p>You Have to Pay: {selectedPlan === 'Plan1' ? '1000' : selectedPlan === 'Plan2' ? '5000' : '10,000'}</p>
+                        <p>You Have to Pay: {selectedPlan === 'Rapid' ? '1000' : selectedPlan === 'Evolution' ? '5000' : '10,000'}</p>
                         <img src="/assets/payment-qr.png" alt="QR Code" className="qr-image" />
                         <div className="popup-actions">
                             <button className="done-btn" onClick={handlePayment}>Done</button>

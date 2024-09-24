@@ -45,7 +45,7 @@ const login = async (req, res) => {
         }
 
         const jwtToken = jwt.sign(
-            { email: user.email, _id: user._id },
+            { email: user.email, _id: user._id },  // Include user ID in the token payload
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -55,8 +55,9 @@ const login = async (req, res) => {
                 message: "Login Success",
                 success: true,
                 jwtToken,
-                email: user.email,   // Return email as well if needed
-                fullName: user.fullName  // Include fullName in the response
+                userId: user._id,       // Return userId in the response
+                email: user.email,      // Return email as well
+                fullName: user.fullName // Include fullName in the response
             });
     } catch (err) {
         res.status(500)
@@ -66,6 +67,7 @@ const login = async (req, res) => {
             });
     }
 };
+
 
 module.exports = {
     signup,

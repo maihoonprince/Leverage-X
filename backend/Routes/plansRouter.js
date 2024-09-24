@@ -7,8 +7,15 @@ router.post('/purchase', async (req, res) => {
     try {
         const { userId, plan } = req.body;
 
-        // Check if user already purchased this plan
+        // Find the user by ID
         const user = await UserModel.findById(userId);
+        
+        // Check if user exists
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        // Check if user already purchased this plan
         if (user.plan === plan) {
             return res.status(400).json({ msg: 'You already used this plan!' });
         }
@@ -27,10 +34,14 @@ router.post('/purchase', async (req, res) => {
 // GET: Check if the user has already purchased a plan
 router.get('/user-plan/:userId', async (req, res) => {
     try {
+        // Find the user by ID
         const user = await UserModel.findById(req.params.userId);
+
+        // Check if user exists
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
+
         res.status(200).json({ plan: user.plan });
     } catch (error) {
         res.status(500).json({ msg: 'Server error' });
