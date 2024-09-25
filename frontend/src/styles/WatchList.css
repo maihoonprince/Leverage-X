@@ -1,6 +1,6 @@
 .watchlist-container {
   display: flex;
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
 }
 
@@ -113,6 +113,8 @@
 
 .main-content {
   flex-grow: 1;
-  padding: 20px;
-  background-color: #f0f0f0;
+  padding-right: 25px;
+  padding-top: 10px;
+  background-color: #1a1a1a;
+  height: 90vh;
 }

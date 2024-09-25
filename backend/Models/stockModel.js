@@ -1,10 +1,16 @@
-// models/stockModel.js
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    currentPrice: { type: Number, required: true },
-    fluctuationRange: { A: { type: Number }, B: { type: Number } }
+    name: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    }
 });
 
-module.exports = mongoose.model('Stock', stockSchema);
+const Stock = mongoose.model('Stock', stockSchema);
+
+module.exports = Stock;

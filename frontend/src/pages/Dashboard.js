@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../utils';
-// import "../styles/AdminDashboard.css";
+
+import "../styles/Admin.css"
 
 function AdminDashboard() {
     const [users, setUsers] = useState([]);
     const [stocks, setStocks] = useState([]);
-    const [selectedStock, setSelectedStock] = useState(null);
-    const [userId, setUserId] = useState(null);
-    const [newBalance, setNewBalance] = useState(0);
+    const [newStock, setNewStock] = useState({ name: '', price: '' });
+    const [newStockPrice, setNewStockPrice] = useState({});
+    const [newUserBalance, setNewUserBalance] = useState({});
 
     useEffect(() => {
         fetchUsers();
@@ -34,29 +35,95 @@ function AdminDashboard() {
         }
     };
 
-    const updateStockPrice = async (stockId, newPrice) => {
+    const handleStockPriceChange = (stockId, value) => {
+        setNewStockPrice((prevState) => ({
+            ...prevState,
+            [stockId]: value,
+        }));
+    };
+
+    const handleBalanceChange = (userId, value) => {
+        setNewUserBalance((prevState) => ({
+            ...prevState,
+            [userId]: value,
+        }));
+    };
+
+    const updateStockPrice = async (stockId) => {
+        const newPrice = newStockPrice[stockId];
+        if (!newPrice) {
+            handleError('Please enter a valid price.');
+            return;
+        }
         try {
-            const response = await axios.put(`http://localhost:8080/api/stocks/${stockId}`, { price: newPrice });
+            await axios.put(`http://localhost:8080/api/stocks/${stockId}`, { price: newPrice });
             handleSuccess('Stock price updated successfully!');
-            fetchStocks();
+            fetchStocks(); // Refresh the stock data
         } catch (error) {
             handleError('Error updating stock price');
         }
     };
 
-    const updateUserBalance = async (userId, balance) => {
+    const updateUserBalance = async (userId) => {
+        const balance = newUserBalance[userId];
+        if (!balance) {
+            handleError('Please enter a valid balance.');
+            return;
+        }
         try {
-            const response = await axios.put(`http://localhost:8080/api/users/balance/${userId}`, { balance });
+            await axios.put(`http://localhost:8080/api/users/balance/${userId}`, { balance });
             handleSuccess('User balance updated successfully!');
-            fetchUsers();
+            fetchUsers(); // Refresh the user data
         } catch (error) {
             handleError('Error updating user balance');
+        }
+    };
+
+    const handleNewStockChange = (e) => {
+        const { name, value } = e.target;
+        setNewStock({ ...newStock, [name]: value });
+    };
+
+    const addNewStock = async () => {
+        if (!newStock.name || !newStock.price) {
+            handleError('Please enter valid stock details.');
+            return;
+        }
+        try {
+            await axios.post('http://localhost:8080/api/stocks', newStock);
+            handleSuccess('New stock added successfully!');
+            setNewStock({ name: '', price: '' }); // Reset form
+            fetchStocks(); // Refresh the stock data
+        } catch (error) {
+            handleError('Error adding new stock');
         }
     };
 
     return (
         <div className="admin-dashboard-container">
             <h1>Admin Dashboard</h1>
+
+            {/* Add New Stock */}
+            <div className="add-stock-section">
+                <h2>Add New Stock</h2>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Stock Name"
+                    value={newStock.name}
+                    onChange={handleNewStockChange}
+                />
+                <input
+                    type="number"
+                    name="price"
+                    placeholder="Initial Price"
+                    value={newStock.price}
+                    onChange={handleNewStockChange}
+                />
+                <button onClick={addNewStock}>Add Stock</button>
+            </div>
+
+            {/* Manage Stock Prices */}
             <div className="stocks-section">
                 <h2>Manage Stock Prices</h2>
                 <table>
@@ -74,14 +141,15 @@ function AdminDashboard() {
                                 <td>{stock.name}</td>
                                 <td>₹{stock.price}</td>
                                 <td>
-                                    <input 
-                                        type="number" 
-                                        placeholder="New Price" 
-                                        onChange={(e) => setSelectedStock({ ...stock, newPrice: e.target.value })}
+                                    <input
+                                        type="number"
+                                        placeholder="New Price"
+                                        value={newStockPrice[stock._id] || ''}
+                                        onChange={(e) => handleStockPriceChange(stock._id, e.target.value)}
                                     />
                                 </td>
                                 <td>
-                                    <button onClick={() => updateStockPrice(stock._id, selectedStock.newPrice)}>
+                                    <button onClick={() => updateStockPrice(stock._id)}>
                                         Update Price
                                     </button>
                                 </td>
@@ -91,6 +159,7 @@ function AdminDashboard() {
                 </table>
             </div>
 
+            {/* Manage User Balances */}
             <div className="users-section">
                 <h2>Manage User Balances</h2>
                 <table>
@@ -108,14 +177,15 @@ function AdminDashboard() {
                                 <td>{user.fullName}</td>
                                 <td>₹{user.balance}</td>
                                 <td>
-                                    <input 
-                                        type="number" 
-                                        placeholder="New Balance" 
-                                        onChange={(e) => setNewBalance(e.target.value)}
+                                    <input
+                                        type="number"
+                                        placeholder="New Balance"
+                                        value={newUserBalance[user._id] || ''}
+                                        onChange={(e) => handleBalanceChange(user._id, e.target.value)}
                                     />
                                 </td>
                                 <td>
-                                    <button onClick={() => updateUserBalance(user._id, newBalance)}>
+                                    <button onClick={() => updateUserBalance(user._id)}>
                                         Update Balance
                                     </button>
                                 </td>
@@ -124,6 +194,7 @@ function AdminDashboard() {
                     </tbody>
                 </table>
             </div>
+
             <ToastContainer />
         </div>
     );

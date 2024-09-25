@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { updateBalance, updateStockPrice, getAllUsers, getAllStocks } = require('../Controllers/adminController');
+const { updateBalance, updateStockPrice, getAllUsers, getAllStocks, createStock } = require('../Controllers/adminController');
 
 // Route to get all users (for admin)
 router.get('/users', getAllUsers);
@@ -13,5 +13,8 @@ router.post('/update-balance', updateBalance);
 
 // Route to update stock price
 router.post('/update-stock-price', updateStockPrice);
+
+// Route to create a new stock
+router.post('/create-stock', createStock);
 
 module.exports = router;

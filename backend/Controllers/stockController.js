@@ -48,8 +48,25 @@ const updateStockPrice = async (req, res) => {
   }
 };
 
+const addStock = async (req, res) => {
+  const { name, price } = req.body;
+
+  if (!name || !price) {
+      return res.status(400).json({ message: 'Stock name and price are required.' });
+  }
+
+  try {
+      const newStock = new Stock({ name, price });
+      await newStock.save();
+      res.status(201).json(newStock);
+  } catch (error) {
+      res.status(500).json({ message: 'Error adding stock.', error });
+  }
+};
+
 module.exports = {
   getStocks,
   buyStock,
   updateStockPrice,
+  addStock,
 };
