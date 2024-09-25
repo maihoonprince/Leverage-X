@@ -4,14 +4,6 @@ import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
 const WatchList = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [currentBalance, setCurrentBalance] = useState(10000);
-  const [quantity, setQuantity] = useState(1);
-  const [investedAmount, setInvestedAmount] = useState(0);
-  const [updatedBalance, setUpdatedBalance] = useState(10000);
-  
-  const navigate = useNavigate();
 
   const options = [
     { name: 'EUR USD.opt', price: 1000 },
@@ -19,33 +11,6 @@ const WatchList = () => {
     { name: 'GBP USD.opt', price: 1020 },
     { name: 'AUD USD.opt', price: 1020 },
   ];
-
-  const handleBuyClick = (option) => {
-    const maxQuantity = Math.floor(currentBalance / option.price);
-    setSelectedOption(option);
-    setQuantity(maxQuantity);
-    setInvestedAmount(option.price * maxQuantity);
-    setUpdatedBalance(currentBalance - option.price * maxQuantity);
-    setShowPopup(true);
-  };
-
-  const handleBuy = () => {
-    if (updatedBalance < 0) {
-      alert("Insufficient funds for this purchase.");
-    } else {
-      setCurrentBalance(updatedBalance);
-      setShowPopup(false);
-      navigate('/pnl', {
-        state: {
-          selectedOption,
-          quantity,
-          investedAmount,
-          updatedBalance,
-          currentPrice: selectedOption.price,
-        }
-      });
-    }
-  };
 
   return (
     <div className="watchlist-container">
@@ -56,34 +21,14 @@ const WatchList = () => {
             <div key={index} className="option">
               <span>{option.name}</span>
               <span>₹{option.price.toFixed(2)}</span>
-              <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button>
+              {/* <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button> */}
             </div>
           ))}
         </div>
         <div className="balance">
-          <span>Balance: ₹{currentBalance.toFixed(2)}</span>
+          <span>Balance: ₹0.00</span>
         </div>
       </div>
-
-      {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h3>Buy {selectedOption.name}</h3>
-            <p>Current Balance: ₹{currentBalance.toFixed(2)}</p>
-            <div className="quantity-input">
-              <label>Quantity: </label>
-              <input type="number" value={quantity} disabled />
-              <p>Max Quantity: {quantity}</p>
-            </div>
-            <p>Invested: ₹{investedAmount.toFixed(2)}</p>
-            <p>Updated Balance: ₹{updatedBalance.toFixed(2)}</p>
-            <div className="popup-buttons">
-              <button className="buy-confirm-btn" onClick={handleBuy}>Confirm Purchase</button>
-              <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="main-content">
         <TradingView /> {/* Ensure there's only one TradingView component here */}

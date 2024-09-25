@@ -1,9 +1,17 @@
-// routes/adminRoutes.js
 const express = require('express');
-const { updateStockPrice, updateUserBalance } = require('../controllers/adminController');
 const router = express.Router();
+const { updateBalance, updateStockPrice, getAllUsers, getAllStocks } = require('../Controllers/adminController');
 
-router.post('/update-stock', updateStockPrice);
-router.post('/update-user-balance', updateUserBalance);
+// Route to get all users (for admin)
+router.get('/users', getAllUsers);
+
+// Route to get all stocks (for admin)
+router.get('/stocks', getAllStocks);
+
+// Route to update user balance
+router.post('/update-balance', updateBalance);
+
+// Route to update stock price
+router.post('/update-stock-price', updateStockPrice);
 
 module.exports = router;

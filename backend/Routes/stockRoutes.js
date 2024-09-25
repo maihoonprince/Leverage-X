@@ -1,10 +1,10 @@
 // routes/stockRoutes.js
 const express = require('express');
-const { buyStock, sellStock, getStocks } = require('../controllers/stockController');
+const { getStocks, buyStock, updateStockPrice } = require('../Controllers/stockController');
 const router = express.Router();
 
 router.get('/', getStocks);
 router.post('/buy', buyStock);
-router.post('/sell', sellStock);
+router.put('/:stockId', updateStockPrice);
 
 module.exports = router;

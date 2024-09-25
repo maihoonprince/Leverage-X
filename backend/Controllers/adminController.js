@@ -1,24 +1,48 @@
-// controllers/adminController.js
+const User = require('../models/User');
 const Stock = require('../models/stockModel');
-const User = require('../models/userModel');
 
-// Update Stock Price (A/B values)
-const updateStockPrice = async (req, res) => {
-    const { stockId, newA, newB } = req.body;
-    const stock = await Stock.findById(stockId);
-    stock.fluctuationRange.A = newA;
-    stock.fluctuationRange.B = newB;
-    await stock.save();
-    res.json({ message: 'Stock price updated', stock });
+// Get all users (For admin dashboard)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching users' });
+  }
 };
 
-// Update User Balance
-const updateUserBalance = async (req, res) => {
-    const { userId, newBalance } = req.body;
+// Get all stocks (For admin dashboard)
+exports.getAllStocks = async (req, res) => {
+  try {
+    const stocks = await Stock.find();
+    res.json(stocks);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching stocks' });
+  }
+};
+
+// Update user balance
+exports.updateBalance = async (req, res) => {
+  const { userId, newBalance } = req.body;
+  try {
     const user = await User.findById(userId);
     user.balance = newBalance;
     await user.save();
-    res.json({ message: 'User balance updated', user });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating balance' });
+  }
 };
 
-module.exports = { updateStockPrice, updateUserBalance };
+// Update stock price
+exports.updateStockPrice = async (req, res) => {
+  const { stockId, newPrice } = req.body;
+  try {
+    const stock = await Stock.findById(stockId);
+    stock.price = newPrice;
+    await stock.save();
+    res.json(stock);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating stock price' });
+  }
+};

@@ -1,43 +1,55 @@
-// controllers/stockController.js
 const Stock = require('../models/stockModel');
-const User = require('../models/userModel');
+const User = require('../models/User');
 
-// Get all stocks
 const getStocks = async (req, res) => {
-    const stocks = await Stock.find({});
-    res.json(stocks);
+  try {
+    const stocks = await Stock.find();
+    res.status(200).json(stocks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching stocks' });
+  }
 };
 
-// Buy Stock
 const buyStock = async (req, res) => {
-    const { stockId, quantity, price } = req.body;
-    const user = await User.findById(req.user.id);
-    const stock = await Stock.findById(stockId);
-    
-    const totalCost = quantity * stock.currentPrice;
-    if (user.balance < totalCost) {
-        return res.status(400).json({ message: 'Insufficient balance' });
+  const { userId, stockId, price } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.balance < price) {
+      return res.status(400).json({ message: 'Insufficient balance' });
     }
 
-    user.stocks.push({ stockId, quantity, buyPrice: stock.currentPrice });
-    user.balance -= totalCost;
+    user.balance -= price;
+    user.stocks.push(stockId);
     await user.save();
 
-    res.json({ message: 'Stock bought successfully', user });
+    res.status(200).json({ message: 'Stock purchased successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error purchasing stock' });
+  }
 };
 
-// Sell Stock
-const sellStock = async (req, res) => {
-    const { stockId } = req.body;
-    const user = await User.findById(req.user.id);
-    const stock = user.stocks.find(s => s.stockId.equals(stockId));
-    const stockPrice = await Stock.findById(stockId).currentPrice;
+const updateStockPrice = async (req, res) => {
+  const { stockId } = req.params;
+  const { price } = req.body;
 
-    user.balance += stock.quantity * stockPrice;
-    user.stocks = user.stocks.filter(s => !s.stockId.equals(stockId));
-    await user.save();
+  try {
+    const stock = await Stock.findById(stockId);
+    if (!stock) return res.status(404).json({ message: 'Stock not found' });
 
-    res.json({ message: 'Stock sold successfully', user });
+    stock.price = price;
+    await stock.save();
+
+    res.status(200).json({ message: 'Stock price updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating stock price' });
+  }
 };
 
-module.exports = { getStocks, buyStock, sellStock };
+module.exports = {
+  getStocks,
+  buyStock,
+  updateStockPrice,
+};

@@ -1,17 +1,23 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { useEffect, useState } from 'react';
+import RefrshHandler from './RefrshHandler';
+
+import Navbar from './components/Navbar'; // Import your Navbar
+import Footer from './components/Footer';
+
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Plans from './pages/Plans';
 import Home from './pages/Home';
-import { useEffect, useState } from 'react';
-import RefrshHandler from './RefrshHandler';
-import Navbar from './components/Navbar'; // Import your Navbar
-import WatchList from './pages/WatchList';
-import PnL from './pages/PnL';
-import Footer from './components/Footer';
 
-import AdminDashboard from "./pages/Dashboard"
+import WatchList1 from './pages/WatchList1';
+import WatchList2 from './pages/WatchList2';
+
+import PnL from './pages/PnL';
+
+import AdminDashboard from "./pages/Dashboard";
+import WatchList from './pages/WatchList';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,7 +60,11 @@ function App() {
         
         <Route path='/home' element={<PrivateRoute element={<Home />} />} />
         <Route path='/plans' element={<PrivateRoute element={<Plans />} />} />
+
         <Route path='/watchlist' element={<PrivateRoute element={<WatchList />} />} />
+        <Route path='/watchlist1' element={<PrivateRoute element={<WatchList1 />} />} />
+        <Route path='/watchlist2' element={<PrivateRoute element={<WatchList2 />} />} />
+
         <Route path='/pnl' element={<PrivateRoute element={<PnL />} />} />
 
         <Route path="/dashboard" element={<AdminDashboard />} />

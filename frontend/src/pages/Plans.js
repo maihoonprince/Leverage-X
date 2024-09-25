@@ -52,7 +52,13 @@ function Plans() {
             if (response.status === 200) {
                 handleSuccess(response.data.msg);
                 setShowPopup(false);
-                navigate('/watchlist'); 
+
+                // Redirect to the appropriate watchlist page based on the selected plan
+                if (selectedPlan === 'Rapid') {
+                    navigate('/watchlist1');  // Redirect to Watchlist 1 for Rapid plan
+                } else if (selectedPlan === 'Evolution' || selectedPlan === 'Prime') {
+                    navigate('/watchlist2');  // Redirect to Watchlist 2 for Evolution and Prime plans
+                }
             }
         } catch (error) {
             handleError(error.response?.data?.msg || 'Payment failed');
