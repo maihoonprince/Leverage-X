@@ -17,6 +17,7 @@ body {
     align-items: center;
     padding: 20px;
     background-color: #1a1a3f;
+    flex-wrap: wrap;
 }
 
 .logo {
@@ -28,6 +29,7 @@ body {
     list-style: none;
     display: flex;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .nav-links li {
@@ -52,11 +54,13 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 60px 0;
+    flex-wrap: wrap;
 }
 
 .header-content h1 {
     font-size: 36px;
     line-height: 1.5;
+    margin: 0;
 }
 
 .header-content p {
@@ -82,7 +86,8 @@ body {
 }
 
 .header-image img {
-    width: 600px;
+    max-width: 100%;
+    height: auto;
 }
 
 /* Features */
@@ -91,14 +96,17 @@ body {
     justify-content: space-around;
     padding: 40px 0;
     background-color: #1a1a3f;
+    flex-wrap: wrap;
 }
 
 .feature-item {
     text-align: center;
+    margin-bottom: 20px;
+    max-width: 250px;
 }
 
 .feature-item h3 {
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 10px;
 }
 
@@ -109,17 +117,21 @@ body {
 }
 
 .how-it-works h2 {
-    font-size: 32px;
+    font-size: 28px;
     margin-bottom: 40px;
 }
 
 .steps {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .step {
-    width: 30%;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 /* Membership Plans */
@@ -131,6 +143,7 @@ body {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .plan-tabs .tab {
@@ -159,7 +172,7 @@ body {
 
 /* Footer */
 .footer {
-    padding: 60px 0;
+    padding: 40px 0;
     background-color: #1a1a3f;
     text-align: center;
 }
@@ -177,4 +190,77 @@ body {
 .footer-links a, .footer-policies a {
     text-decoration: none;
     color: #fff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-content h1 {
+        font-size: 28px;
+    }
+
+    .header-buttons .btn {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .feature-item {
+        max-width: 100%;
+    }
+
+    .steps {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .step {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content h1 {
+        font-size: 24px;
+    }
+
+    .header-content p {
+        font-size: 14px;
+    }
+
+    .header-buttons .btn {
+        padding: 8px 15px;
+    }
+
+    .plans-table th, .plans-table td {
+        padding: 5px 10px;
+    }
+
+    .plan-tabs .tab {
+        padding: 8px 15px;
+    }
+
+    .footer-links li, .footer-policies li {
+        margin-right: 10px;
+    }
 }

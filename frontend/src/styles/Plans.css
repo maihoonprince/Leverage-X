@@ -161,19 +161,48 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .plans-table {
-      width: 95%;
+    width: 95%;
   }
 
   .plans-table th, .plans-table td {
-      padding: 12px;
-      font-size: 16px;
+    padding: 12px;
+    font-size: 16px;
   }
 
   .plans-title {
-      font-size: 28px;
+    font-size: 28px;
   }
 
   .popup-content {
-      padding: 20px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .plans-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .plans-table th, .plans-table td {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .buy-now-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .popup-content {
+    padding: 15px;
+  }
+
+  .popup-content h2 {
+    font-size: 22px;
+  }
+
+  .popup-content p {
+    font-size: 16px;
   }
 }

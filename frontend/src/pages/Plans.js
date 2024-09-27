@@ -53,6 +53,9 @@ function Plans() {
                 handleSuccess(response.data.msg);
                 setShowPopup(false);
 
+                // Save selected plan to localStorage
+                localStorage.setItem('selectedPlan', selectedPlan);
+
                 // Redirect to the appropriate watchlist page based on the selected plan
                 if (selectedPlan === 'Rapid') {
                     navigate('/watchlist1');  // Redirect to Watchlist 1 for Rapid plan

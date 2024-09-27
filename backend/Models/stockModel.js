@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    watchlist1: {
+        A: { type: Number, default: 0 },
+        B: { type: Number, default: 0 },
     },
-    price: {
-        type: Number,
-        required: true
-    }
+    watchlist2: {
+        A: { type: Number, default: 0 },
+        B: { type: Number, default: 0 },
+    },
 });
 
-const Stock = mongoose.model('Stock', stockSchema);
-
-module.exports = Stock;
+module.exports = mongoose.model('Stock', stockSchema);

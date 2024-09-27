@@ -27,7 +27,7 @@ const WatchList2 = () => {
   // Fetch stocks from the backend
   const fetchStocks = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/stocks'); // Replace with your backend URL
+      const response = await axios.get('http://localhost:8080/api/watchlist2'); // Replace with your backend URL
       setStocks(response.data); // Assuming response.data contains the list of stocks
     } catch (error) {
       console.error('Error fetching stocks:', error);
