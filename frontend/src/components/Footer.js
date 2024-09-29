@@ -1,8 +1,9 @@
-import React from 'react'
+import React from 'react';
+import '../styles/footer.css';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer className="main">
         <p>© 2024 Upper Circuit. All Rights Reserved.</p>
         <div className="footer-links">
           <a href="/terms">Terms & Conditions</a>

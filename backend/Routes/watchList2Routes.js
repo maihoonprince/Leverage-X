@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const WatchList2Stock = require('../models/watchList2Model'); // Correct model
-const { startPriceFluctuation } = require('../controllers/watchList2Controller'); // Import fluctuation logic
+const { startPriceFluctuation, buyStock } = require('../Controllers/watchList2Controller'); // Import fluctuation logic
 
 // Fetch all stocks for WatchList2
 router.get('/', async (req, res) => {
@@ -47,5 +47,8 @@ router.put('/:id', async (req, res) => {
 
 // Start price fluctuation when the route is initialized
 startPriceFluctuation();
+
+// Route to buy a stock
+router.post('/buy', buyStock);
 
 module.exports = router;

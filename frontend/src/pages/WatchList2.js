@@ -1,67 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // To make API requests
+import axios from 'axios'; 
 import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
 const WatchList2 = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [currentBalance, setCurrentBalance] = useState(0); // Set to 0 initially, will be fetched
+  const [currentBalance, setCurrentBalance] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [investedAmount, setInvestedAmount] = useState(0);
   const [updatedBalance, setUpdatedBalance] = useState(0);
-  const [stocks, setStocks] = useState([]); // Store fetched stock data
+  const [stocks, setStocks] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch userId from localStorage or authentication context
-  const userId = localStorage.getItem('userId'); // Assuming userId is stored after login
+  const userId = localStorage.getItem('userId');
 
-  // Redirect to login if userId is not available (i.e., user not logged in)
   useEffect(() => {
     if (!userId) {
-      navigate('/login'); // Redirect to login if not logged in
+      navigate('/login');
     }
   }, [userId, navigate]);
 
-  // Fetch stocks from the backend
   const fetchStocks = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/watchlist2'); // Replace with your backend URL
-      setStocks(response.data); // Assuming response.data contains the list of stocks
+      const response = await axios.get('http://localhost:8080/api/watchlist2');
+      setStocks(response.data);
     } catch (error) {
       console.error('Error fetching stocks:', error);
     }
   };
 
-  // Fetch user's current balance from the backend
   const fetchBalance = async () => {
-    if (!userId) return; // Ensure we don't fetch balance if userId is not available
+    if (!userId) return;
 
     try {
       const response = await axios.get(`http://localhost:8080/api/users/balance/${userId}`);
-      setCurrentBalance(response.data.balance); // Assuming response.data.balance has the user's balance
-      setUpdatedBalance(response.data.balance); // Initially updated balance is the same
+      setCurrentBalance(response.data.balance);
+      setUpdatedBalance(response.data.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
     }
   };
 
-  // Price fluctuation logic (Client-side)
   useEffect(() => {
     fetchStocks();
     fetchBalance();
     const interval = setInterval(() => {
-      const updatedPrices = stocks.map((stock) => {
-        const fluctuation = Math.random() * 40 - 20; // Random fluctuation
-        const newPrice = Math.min(stock.HH, Math.max(stock.LL, stock.price + fluctuation));
-        return { ...stock, price: newPrice };
-      });
-      setStocks(updatedPrices);
+      fetchStocks(); // Fetch new prices every few seconds
     }, 2000);
     
     return () => clearInterval(interval); // Cleanup on unmount
-  }, [stocks]);
+  }, []);
 
   const handleBuyClick = (option) => {
     const maxQuantity = Math.floor(currentBalance / option.price);
@@ -79,20 +69,13 @@ const WatchList2 = () => {
     }
 
     try {
-      // 1. Post the buy transaction to the backend
-      await axios.post('http://localhost:8080/api/stocks/buy', {
-        stockId: selectedOption._id, // Use actual stock ID
-        userId: userId,              // User ID
+      await axios.post('http://localhost:8080/api/watchlist2/buy', {
+        stockName: selectedOption.name,
+        userId: userId,
         quantity: quantity,
         investedAmount: investedAmount
       });
 
-      // 2. Update the user's balance in the backend
-      await axios.put(`http://localhost:8080/api/users/balance/${userId}`, {
-        newBalance: updatedBalance
-      });
-
-      // 3. Update balance in state and redirect to PnL page
       setCurrentBalance(updatedBalance);
       setShowPopup(false);
       navigate('/pnl', {
@@ -147,7 +130,7 @@ const WatchList2 = () => {
         </div>
       )}
 
-      <div className="main-content">
+      <div className="trading-view">
         <TradingView />
       </div>
     </div>

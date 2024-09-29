@@ -6,29 +6,28 @@ import '../styles/WatchList.css';
 
 const WatchList1 = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [currentBalance, setCurrentBalance] = useState(0); // Set to 0 initially, will be fetched
-  const [quantity, setQuantity] = useState(1);
-  const [investedAmount, setInvestedAmount] = useState(0);
-  const [updatedBalance, setUpdatedBalance] = useState(0);
-  const [stocks, setStocks] = useState([]); // Store fetched stock data
+  const [selectedOption, setSelectedOption] = useState(null); // Currently selected stock
+  const [currentBalance, setCurrentBalance] = useState(0); // User's current balance
+  const [quantity, setQuantity] = useState(1); // Quantity of stock the user wants to buy
+  const [investedAmount, setInvestedAmount] = useState(0); // Total amount invested
+  const [updatedBalance, setUpdatedBalance] = useState(0); // Balance after the purchase
+  const [stocks, setStocks] = useState([]); // List of stocks
   const navigate = useNavigate();
 
-  // Fetch userId from localStorage or authentication context
-  const userId = localStorage.getItem('userId'); // Assuming userId is stored after login
+  const userId = localStorage.getItem('userId'); // Fetch userId from localStorage (assuming user is logged in)
 
-  // Redirect to login if userId is not available (i.e., user not logged in)
+  // Redirect to login if user is not authenticated
   useEffect(() => {
     if (!userId) {
-      navigate('/login'); // Redirect to login if not logged in
+      navigate('/login');
     }
   }, [userId, navigate]);
 
-  // Fetch stocks from the backend
+  // Fetch the list of stocks from the backend
   const fetchStocks = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/watchlist1'); // Replace with your backend URL
-      setStocks(response.data); // Assuming response.data contains the list of stocks
+      const response = await axios.get('http://localhost:8080/api/watchlist1');
+      setStocks(response.data); // Assuming response.data is the array of stocks
     } catch (error) {
       console.error('Error fetching stocks:', error);
     }
@@ -36,42 +35,36 @@ const WatchList1 = () => {
 
   // Fetch user's current balance from the backend
   const fetchBalance = async () => {
-    if (!userId) return; // Ensure we don't fetch balance if userId is not available
+    if (!userId) return;
 
     try {
       const response = await axios.get(`http://localhost:8080/api/users/balance/${userId}`);
-      setCurrentBalance(response.data.balance); // Assuming response.data.balance has the user's balance
-      setUpdatedBalance(response.data.balance); // Initially updated balance is the same
+      setCurrentBalance(response.data.balance); // Assuming the balance is in response.data.balance
+      setUpdatedBalance(response.data.balance); // Initially set updated balance to current balance
     } catch (error) {
       console.error('Error fetching user balance:', error);
     }
   };
 
-  // Price fluctuation logic (Client-side)
+  // Fetch stocks and user balance on component mount
   useEffect(() => {
     fetchStocks();
     fetchBalance();
-    const interval = setInterval(() => {
-      const updatedPrices = stocks.map((stock) => {
-        const fluctuation = Math.random() * 40 - 20; // Random fluctuation
-        const newPrice = Math.min(stock.HH, Math.max(stock.LL, stock.price + fluctuation));
-        return { ...stock, price: newPrice };
-      });
-      setStocks(updatedPrices);
-    }, 2000);
-    
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [stocks]);
+    const interval = setInterval(fetchStocks, 1000); // Fetch updated stock prices every 2 seconds
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
 
+  // Handle buy button click - calculate quantity and show the popup
   const handleBuyClick = (option) => {
-    const maxQuantity = Math.floor(currentBalance / option.price);
-    setSelectedOption(option);
-    setQuantity(maxQuantity);
-    setInvestedAmount(option.price * maxQuantity);
-    setUpdatedBalance(currentBalance - option.price * maxQuantity);
-    setShowPopup(true);
+    const maxQuantity = Math.floor(currentBalance / option.price); // Calculate how much stock the user can afford
+    setSelectedOption(option); // Set the selected stock
+    setQuantity(maxQuantity); // Set the max quantity the user can buy
+    setInvestedAmount(option.price * maxQuantity); // Set the invested amount
+    setUpdatedBalance(currentBalance - (option.price * maxQuantity)); // Set updated balance after purchase
+    setShowPopup(true); // Show the confirmation popup
   };
 
+  // Handle stock purchase
   const handleBuy = async () => {
     if (updatedBalance < 0) {
       alert("Insufficient funds for this purchase.");
@@ -79,40 +72,46 @@ const WatchList1 = () => {
     }
 
     try {
-      // 1. Post the buy transaction to the backend
-      await axios.post('http://localhost:8080/api/stocks/buy', {
-        stockId: selectedOption._id, // Use actual stock ID
-        userId: userId,              // User ID
-        quantity: quantity,
-        investedAmount: investedAmount
+      // 1. Send the buy transaction to the backend
+      const buyResponse = await axios.post('http://localhost:8080/api/watchlist1/buy', {
+        stockName: selectedOption.name,  // Name of the stock
+        userId: userId,                  // User ID
+        quantity: quantity               // Quantity bought
       });
 
-      // 2. Update the user's balance in the backend
-      await axios.put(`http://localhost:8080/api/users/balance/${userId}`, {
-        newBalance: updatedBalance
-      });
+      // Check if the buy transaction was successful and balance is updated
+      if (buyResponse.status === 200) {
+        const newBalance = buyResponse.data.updatedBalance;
 
-      // 3. Update balance in state and redirect to PnL page
-      setCurrentBalance(updatedBalance);
-      setShowPopup(false);
-      navigate('/pnl', {
-        state: {
-          selectedOption,
-          quantity,
-          investedAmount,
-          updatedBalance,
-          currentPrice: selectedOption.price
-        }
-      });
+        // 2. Update local balance and redirect to the PnL page
+        setCurrentBalance(newBalance); // Update balance in the UI
+        setUpdatedBalance(newBalance);
+
+        setShowPopup(false); // Close the popup
+
+        // 3. Navigate to PnL page with updated details
+        navigate('/pnl', {
+          state: {
+            selectedOption,                // Selected stock details
+            quantity,                      // Quantity bought
+            investedAmount,                // Amount invested
+            updatedBalance: newBalance,    // Updated balance
+            currentPrice: selectedOption.price // Current stock price
+          }
+        });
+      } else {
+        alert('Error purchasing stock. Please try again.');
+      }
     } catch (error) {
       console.error('Error during the buy transaction:', error);
     }
   };
 
+
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Forex Exchange Option</h2>
+        <h2>Forex Exchange Options</h2>
         <div className="options">
           {stocks.length > 0 && stocks.map((option, index) => (
             <div key={index} className="option">

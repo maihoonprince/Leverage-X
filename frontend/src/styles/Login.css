@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f4f9;
+    background-color: #0e0f12;
 }
 
 h1 {
@@ -16,10 +16,10 @@ h1 {
 }
 
 .login-form {
-    background-color: #fff;
+    background-color: #0e0f12;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(255, 245, 245, 0.1);
     width: 100%;
     max-width: 400px;
 }
@@ -52,7 +52,7 @@ h1 {
 .login-button {
     width: 100%;
     padding: 10px;
-    background-color: #6200ea;
+    background-color: #2ecc71;
     color: #fff;
     font-size: 1rem;
     border: none;
@@ -62,7 +62,7 @@ h1 {
 }
 
 .login-button:hover {
-    background-color: #3700b3;
+    background-color: #2ecc71;
 }
 
 .redirect-signup {
@@ -74,7 +74,7 @@ h1 {
 }
 
 .redirect-signup a {
-    color: #6200ea;
+    color: #2ecc71;
     text-decoration: none;
 }
 

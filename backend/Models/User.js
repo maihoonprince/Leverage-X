@@ -38,9 +38,10 @@ const UserSchema = new Schema({
         default: null
     },
     stocks: [{
-        stockName: String,
+        stockName: String,  // Store stock name
         buyPrice: Number,
         quantity: Number,
+        investedAmount: Number,  // Track invested amount separately
         sellPrice: Number,
     }]
 });

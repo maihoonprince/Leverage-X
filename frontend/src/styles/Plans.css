@@ -2,7 +2,7 @@
 .plans-container {
   padding: 40px 20px;
   text-align: center;
-  background-color: #f9f9f9;
+  background-color: #0e0f12;
 }
 
 .plans-title {
@@ -18,8 +18,9 @@
   width: 80%;
   margin: 0 auto;
   border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #0e0f12;
+  box-shadow: 0 0px 34px green;
+  border: 1px solid #28a745;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -27,14 +28,24 @@
 .plans-table th,
 .plans-table td {
   padding: 20px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
+  /* text-align: center; */
+  border-bottom: 1px solid #dddddd;
   font-size: 18px;
-  color: #555;
+  color: white;
+  align-items: center;
+  justify-content: center;
+}
+.plans-table tr{
+  background-color: #0e0f12;
+}
+
+.plans-table tr td{
+  justify-content: center;
+  align-items: center;
 }
 
 .plans-table th {
-  background-color: #333;
+  background-color: rgb(3, 25, 34);
   color: #fff;
   text-transform: uppercase;
   font-weight: 500;
@@ -46,11 +57,11 @@
 }
 
 .plans-table td {
-  background-color: #fff;
+  background-color: #0e0f12;
 }
 
 .plans-table tr:hover td {
-  background-color: #f1f1f1;
+  background-color: #0e0f12;
 }
 
 /* Buttons */

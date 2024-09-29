@@ -27,7 +27,7 @@ const Navbar = ({ isAuthenticated, loggedInUser, handleLogout }) => {
 
     return (
         <nav>
-            <div className="logo">YourLogo</div>
+            <div className="logo">L<span>X</span></div>
             <div className="nav-links">
                 <Link to="/home">Home</Link>
                 <Link to="/plans">Plans</Link>

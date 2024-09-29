@@ -1,107 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import "../styles/PnL.css";
-import { savePnLDataToBackend, loadPnLDataFromBackend } from '../services/pnlService'; // Import the service
+import { useLocation } from 'react-router-dom'; // To get navigation state
+import axios from 'axios';
 
-const PnL = ({ currentUser }) => {
-  const location = useLocation();
-  const { selectedOption, currentPrice, quantity, investedAmount, updatedBalance } = location.state || {}; // Access passed state
+const PnLPage = () => {
+    
+    const [userData, setUserData] = useState(null);
+    const userId = localStorage.getItem('userId');
 
-  // State to hold PnL data and total balance
-  const [pnl, setPnL] = useState({
-    stocks: [],
-    totalBalance: updatedBalance || 0
-  });
-  const [loading, setLoading] = useState(false); // To manage the loading state during stock selling
-  const [error, setError] = useState(null); // To handle errors
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/pnl/${userId}`);
+                setUserData(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+        fetchUserData();
+    }, [userId]);
 
-  // Load PnL data from the backend when the component mounts
-  useEffect(() => {
-    const fetchPnLData = async () => {
-      if (currentUser && currentUser._id) {
+    const handleSell = async (stockName) => {
         try {
-          const pnlData = await loadPnLDataFromBackend(currentUser._id);
-          if (pnlData) {
-            setPnL(pnlData);
-          }
-        } catch (err) {
-          console.error('Error loading PnL data', err);
-          setError('Failed to load PnL data.');
+            const response = await axios.post('http://localhost:8080/api/pnl/sell', { userId, stockName });
+            alert(response.data.message);
+            // Update the remaining balance
+            setUserData(prevData => ({
+                ...prevData,
+                balance: response.data.newBalance,
+                stocks: prevData.stocks.filter(stock => stock.stockName !== stockName)
+            }));
+        } catch (error) {
+            console.error('Error selling stock:', error);
         }
-      }
-    };
-    fetchPnLData();
-  }, [currentUser]);
-
-  // Handle selling stock (updating the PnL data)
-  const handleSellStock = async () => {
-    if (!selectedOption || !quantity) {
-      setError('No stock selected or quantity is invalid.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const soldStock = {
-      name: selectedOption.name,
-      currentPrice: currentPrice,
-      quantity: quantity,
-      investedAmount: investedAmount,
     };
 
-    const updatedStocks = [...pnl.stocks, soldStock];
-    const updatedTotalBalance = calculateNewBalance(updatedStocks);
-
-    const updatedPnL = {
-      stocks: updatedStocks,
-      totalBalance: updatedTotalBalance
-    };
-
-    setPnL(updatedPnL);
-
-    try {
-      await savePnLDataToBackend({
-        userId: currentUser._id,
-        stocks: updatedStocks,
-        totalBalance: updatedTotalBalance
-      });
-    } catch (err) {
-      console.error('Error saving PnL data', err);
-      setError('Failed to update PnL data.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Calculate the new total balance after buying/selling
-  const calculateNewBalance = (stocks) => {
-    return stocks.reduce((acc, stock) => acc + (stock.quantity * stock.currentPrice), 0);
-  };
-
-  return (
-    <div className="pnl-container">
-      <h1>Profit & Loss</h1>
-
-      {error && <p className="error">{error}</p>} {/* Display error messages */}
-
-      <div className="pnl-option-card">
-        <h3>{selectedOption ? selectedOption.name : 'No stock selected'}</h3>
-        <p>Current Price: ₹{currentPrice ? currentPrice.toFixed(2) : 'N/A'}</p>
-        <p>Quantity: {quantity !== undefined ? quantity : 'N/A'}</p>
-        <p>Invested: ₹{investedAmount ? investedAmount.toFixed(2) : 'N/A'}</p>
-
-        {/* Sell Button */}
-        <button className="sell-btn" onClick={handleSellStock} disabled={!selectedOption || loading}>
-          {loading ? 'Processing...' : 'Sell'}
-        </button>
-      </div>
-
-      <div className="total-balance">
-        <h3>Total Balance: ₹{pnl.totalBalance ? pnl.totalBalance.toFixed(2) : 'N/A'}</h3>
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Profit & Loss</h2>
+            {userData && userData.stocks.length > 0 ? (
+                userData.stocks.map(stock => (
+                    <div key={stock.stockName}>
+                        <p>Stock Name: {stock.stockName}</p>
+                        <p>Quantity: {stock.quantity}</p>
+                        <p>Buy Price: ₹{stock.buyPrice}</p>
+                        <p>Current Price: ₹{stock.currentPrice}</p>
+                        <p>Invested Amount: ₹{stock.investedAmount}</p>
+                        <p>Profit/Loss: ₹{(stock.quantity * stock.currentPrice) - stock.investedAmount}</p>
+                        <button onClick={() => handleSell(stock.stockName)}>Sell</button>
+                    </div>
+                ))
+            ) : (
+                <p>No stocks available.</p>
+            )}
+            <h3>Remaining Balance: ₹{userData?.balance}</h3>
+            <button>Withdraw</button>
+        </div>
+    );
 };
 
-export default PnL;
+export default PnLPage;
