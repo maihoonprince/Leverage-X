@@ -86,7 +86,6 @@ const WatchList1 = () => {
             quantity,
             investedAmount,
             updatedBalance: response.data.updatedBalance,
-            currentPrice: selectedOption.price
           }
         });
       } else {

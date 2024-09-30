@@ -49,7 +49,7 @@ const WatchList2 = () => {
     const interval = setInterval(() => {
       fetchStocks(); // Fetch updated WatchList2 stock prices
     }, 2000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -64,7 +64,7 @@ const WatchList2 = () => {
 
   const handleBuy = async () => {
     if (updatedBalance < 0) {
-      alert("Insufficient funds for this purchase.");
+      alert('Insufficient funds for this purchase.');
       return;
     }
 
@@ -81,12 +81,11 @@ const WatchList2 = () => {
         setShowPopup(false);
         navigate('/pnl', {
           state: {
-            watchlistType: '2',  // Flag for WatchList2
+            watchlistType: '2', // Flag for WatchList2
             selectedOption,
             quantity,
             investedAmount,
-            updatedBalance: response.data.updatedBalance,
-            currentPrice: selectedOption.price
+            updatedBalance: response.data.updatedBalance
           }
         });
       } else {
@@ -123,7 +122,7 @@ const WatchList2 = () => {
             <p>Quantity: {quantity}</p>
             <p>Invested: ₹{investedAmount.toFixed(2)}</p>
             <p>Updated Balance: ₹{updatedBalance.toFixed(2)}</p>
-            <button onClick={handleBuy}>Confirm Purchase</button>
+            <button onClick={handleBuy} disabled={quantity === 0}>Confirm Purchase</button>
             <button onClick={() => setShowPopup(false)}>Cancel</button>
           </div>
         </div>
