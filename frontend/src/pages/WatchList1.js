@@ -123,7 +123,7 @@ const WatchList1 = () => {
             <p>Quantity: {quantity}</p>
             <p>Invested: ₹{investedAmount.toFixed(2)}</p>
             <p>Updated Balance: ₹{updatedBalance.toFixed(2)}</p>
-            <button onClick={handleBuy}>Confirm Purchase</button>
+            <button onClick={handleBuy} disabled={quantity === 0}>Confirm Purchase</button>
             <button onClick={() => setShowPopup(false)}>Cancel</button>
           </div>
         </div>
