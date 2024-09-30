@@ -48,7 +48,7 @@ const WatchList1 = () => {
     fetchBalance();
     const interval = setInterval(() => {
       fetchStocks(); // Fetch updated WatchList1 stock prices
-    }, 2000);
+    }, 1000);
     
     return () => clearInterval(interval);
   }, []);
