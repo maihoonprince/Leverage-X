@@ -28,6 +28,7 @@ app.use('/auth', AuthRouter);
 app.use('/api/plans', plansRouter);
 
 app.use('/api/stocks', stockRoutes);
+
 app.use('/api/users', userRoutes);
 
 app.use('/api/watchlist1', watchList1Routes);

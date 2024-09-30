@@ -43,7 +43,17 @@ const UserSchema = new Schema({
         quantity: Number,
         investedAmount: Number,  // Track invested amount separately
         sellPrice: Number,
-    }]
+    }],
+    watchList1Stocks: {
+        type: Map, // Key-value pairs of stock name and current price
+        of: Number,
+        default: {}
+    },
+    watchList2Stocks: {
+        type: Map, // Key-value pairs of stock name and current price
+        of: Number,
+        default: {}
+    },
 });
 
 // Use the following to avoid the OverwriteModelError:

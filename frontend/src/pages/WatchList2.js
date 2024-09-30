@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; 
+import axios from 'axios';
 import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
@@ -27,7 +27,7 @@ const WatchList2 = () => {
       const response = await axios.get('http://localhost:8080/api/watchlist2');
       setStocks(response.data);
     } catch (error) {
-      console.error('Error fetching stocks:', error);
+      console.error('Error fetching WatchList2 stocks:', error);
     }
   };
 
@@ -47,10 +47,10 @@ const WatchList2 = () => {
     fetchStocks();
     fetchBalance();
     const interval = setInterval(() => {
-      fetchStocks(); // Fetch new prices every few seconds
+      fetchStocks(); // Fetch updated WatchList2 stock prices
     }, 2000);
     
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, []);
 
   const handleBuyClick = (option) => {
@@ -58,7 +58,7 @@ const WatchList2 = () => {
     setSelectedOption(option);
     setQuantity(maxQuantity);
     setInvestedAmount(option.price * maxQuantity);
-    setUpdatedBalance(currentBalance - option.price * maxQuantity);
+    setUpdatedBalance(currentBalance - (option.price * maxQuantity));
     setShowPopup(true);
   };
 
@@ -69,35 +69,40 @@ const WatchList2 = () => {
     }
 
     try {
-      await axios.post('http://localhost:8080/api/watchlist2/buy', {
+      const response = await axios.post('http://localhost:8080/api/watchlist2/buy', {
         stockName: selectedOption.name,
         userId: userId,
-        quantity: quantity,
-        investedAmount: investedAmount
+        quantity: quantity
       });
 
-      setCurrentBalance(updatedBalance);
-      setShowPopup(false);
-      navigate('/pnl', {
-        state: {
-          selectedOption,
-          quantity,
-          investedAmount,
-          updatedBalance,
-          currentPrice: selectedOption.price
-        }
-      });
+      if (response.status === 200) {
+        setCurrentBalance(response.data.updatedBalance);
+        setUpdatedBalance(response.data.updatedBalance);
+        setShowPopup(false);
+        navigate('/pnl', {
+          state: {
+            watchlistType: '2',  // Flag for WatchList2
+            selectedOption,
+            quantity,
+            investedAmount,
+            updatedBalance: response.data.updatedBalance,
+            currentPrice: selectedOption.price
+          }
+        });
+      } else {
+        alert('Error purchasing stock.');
+      }
     } catch (error) {
-      console.error('Error during the buy transaction:', error);
+      console.error('Error buying stock:', error);
     }
   };
 
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Forex Exchange Option</h2>
+        <h2>Forex Exchange Options</h2>
         <div className="options">
-          {stocks.length > 0 && stocks.map((option, index) => (
+          {stocks.map((option, index) => (
             <div key={index} className="option">
               <span>{option.name}</span>
               <span>₹{option.price.toFixed(2)}</span>
@@ -115,22 +120,16 @@ const WatchList2 = () => {
           <div className="popup-content">
             <h3>Buy {selectedOption.name}</h3>
             <p>Current Balance: ₹{currentBalance.toFixed(2)}</p>
-            <div className="quantity-input">
-              <label>Quantity: </label>
-              <input type="number" value={quantity} disabled />
-              <p>Max Quantity: {quantity}</p>
-            </div>
+            <p>Quantity: {quantity}</p>
             <p>Invested: ₹{investedAmount.toFixed(2)}</p>
             <p>Updated Balance: ₹{updatedBalance.toFixed(2)}</p>
-            <div className="popup-buttons">
-              <button className="buy-confirm-btn" onClick={handleBuy}>Confirm Purchase</button>
-              <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
-            </div>
+            <button onClick={handleBuy}>Confirm Purchase</button>
+            <button onClick={() => setShowPopup(false)}>Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="trading-view">
+      <div className="main-content">
         <TradingView />
       </div>
     </div>
