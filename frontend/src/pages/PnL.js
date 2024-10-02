@@ -4,26 +4,12 @@ import axios from 'axios';
 import '../styles/PnL.css';
 
 const PnL = () => {
+  const [stocks, setStocks] = useState([]);
+  const [userBalance, setUserBalance] = useState(0);
+  const [updatedStocks, setUpdatedStocks] = useState([]);
+  const userId = localStorage.getItem('userId');
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Check if state exists in location, otherwise retrieve from localStorage
-  const { state } = location;
-  const initialState = state || JSON.parse(localStorage.getItem('pnlData')) || {};
-
-  const { watchlistType, selectedOption, quantity, investedAmount, updatedBalance } = initialState;
-
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [remainingBalance, setRemainingBalance] = useState(updatedBalance || 0);
-  const [isTradeRunning, setIsTradeRunning] = useState(true);
-  const userId = localStorage.getItem('userId');
-
-  // Persist data to localStorage when state changes
-  useEffect(() => {
-    if (state) {
-      localStorage.setItem('pnlData', JSON.stringify(state));
-    }
-  }, [state]);
 
   useEffect(() => {
     if (!userId) {
@@ -31,109 +17,96 @@ const PnL = () => {
     }
   }, [userId, navigate]);
 
-  const fetchStockPrice = async () => {
+  const fetchUserStocks = async () => {
     try {
-      if (watchlistType && selectedOption) {
-        const response = await axios.get(`http://localhost:8080/api/stock-price/${watchlistType}/${selectedOption.name}`);
-        setCurrentPrice(response.data.price);
-      }
+      const response = await axios.get(`http://localhost:8080/api/users/stocks/${userId}`);
+      setStocks(response.data.stocks);
+      setUserBalance(response.data.balance);
     } catch (error) {
-      console.error('Error fetching stock price:', error);
+      console.error('Error fetching user stocks:', error);
     }
   };
 
-  useEffect(() => {
-    if (selectedOption) {
-      fetchStockPrice();
-      const interval = setInterval(fetchStockPrice, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [watchlistType, selectedOption]);
-
-  const handleSell = async () => {
+  // Fetch real-time price from the watchlist (1 or 2)
+  const fetchRealTimePrices = async () => {
     try {
-      if (selectedOption) {
-        const response = await axios.post('http://localhost:8080/api/pnl/sell', {
-          userId,
-          stockName: selectedOption.name,
-          quantity,
-          sellPrice: currentPrice,
-        });
+      const watchlistType = location.state?.watchlistType || '1'; // Default to WatchList1 if not provided
+      const response = await axios.get(`http://localhost:8080/api/watchlist${watchlistType}`);
+      setUpdatedStocks(response.data); // Ensure the response data contains the updated prices
+    } catch (error) {
+      console.error('Error fetching real-time prices:', error);
+    }
+  };
+  
 
-        if (response.status === 200) {
-          setRemainingBalance(response.data.updatedBalance);
-          setIsTradeRunning(false); // Trade complete, allow withdrawal
-          alert('Stock sold successfully!');
-        }
+  // Effect to fetch user stocks and real-time prices
+  useEffect(() => {
+    fetchUserStocks();
+    fetchRealTimePrices();
+    const interval = setInterval(() => {
+      fetchRealTimePrices(); // Update prices every second
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const calculateProfitLoss = (buyPrice, currentPrice, quantity) => {
+    return (currentPrice - buyPrice) * quantity;
+  };
+
+  const handleSell = async (stockName, quantity) => {
+    try {
+      const watchlistType = location.state?.watchlistType || '1'; // Get the correct watchlist type
+      const response = await axios.post('http://localhost:8080/api/users/sell', {
+        userId,
+        stockName,
+        quantity,
+        watchlistType, // Pass this to the backend
+      });
+  
+      if (response.status === 200) {
+        // Update user balance and refresh stocks
+        setUserBalance(response.data.updatedBalance);
+        fetchUserStocks(); // Refresh user stocks after selling
       }
     } catch (error) {
       console.error('Error selling stock:', error);
     }
   };
 
-  const handleWithdraw = async () => {
-    if (isTradeRunning) return; // Prevent withdraw if trade is running
-
-    try {
-      const response = await axios.post('http://localhost:8080/api/pnl/withdraw', {
-        userId,
-        amount: remainingBalance,
-      });
-
-      if (response.status === 200) {
-        alert('Withdraw successful!');
-        setRemainingBalance(0); // Set balance to zero after withdrawal
-      }
-    } catch (error) {
-      console.error('Error during withdrawal:', error);
-    }
-  };
-
-  // If the required data is missing, show loading
-  if (!selectedOption) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="pnl-container">
-      <h2>Profit and Loss (PnL) Page</h2>
+      <h2>Your Portfolio</h2>
+      <div className="portfolio">
+        {stocks.map((stock, index) => {
+          // Find the current price from the updatedStocks array
+          const currentStock = updatedStocks.find((s) => s.name === stock.stockName);
+          const currentPrice = currentStock ? currentStock.price : stock.buyPrice; // Use buy price if current price is not available
+          const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
 
-      <div className="stock-details">
-        <div className="detail-row">
-          <span>Stock Name:</span>
-          <span>{selectedOption.name}</span>
-        </div>
-        <div className="detail-row">
-          <span>Quantity:</span>
-          <span>{quantity}</span>
-        </div>
-        <div className="detail-row">
-          <span>Buy Price:</span>
-          <span>₹{selectedOption.price?.toFixed(2)}</span>
-        </div>
-        <div className="detail-row">
-          <span>Current Price:</span>
-          <span>₹{currentPrice?.toFixed(2)}</span>
-        </div>
-        <div className="detail-row">
-          <span>Invested Amount:</span>
-          <span>₹{investedAmount?.toFixed(2)}</span>
-        </div>
-        <div className="detail-row">
-          <span>Remaining Balance:</span>
-          <span>₹{remainingBalance?.toFixed(2)}</span>
-        </div>
+          return (
+            <div key={index} className="stock-item">
+              <span>{stock.stockName}</span>
+              <span>Quantity: {stock.quantity}</span>
+              <span>Buy Price: ₹{stock.buyPrice.toFixed(2)}</span>
+              <span>Current Price: ₹{currentPrice.toFixed(2)}</span>
+              <span>Invested Amount: ₹{stock.investedAmount.toFixed(2)}</span>
+              <span
+                className={profitLoss >= 0 ? 'profit' : 'loss'}
+              >
+                Profit/Loss: ₹{profitLoss.toFixed(2)}
+              </span>
+              <button
+                onClick={() => handleSell(stock.stockName, stock.quantity)}
+                className="sell-btn"
+              >
+                Sell
+              </button>
+            </div>
+          );
+        })}
       </div>
-
-      <div className="actions">
-        <button onClick={handleSell} className="sell-btn">Sell</button>
-        <button 
-          onClick={handleWithdraw} 
-          className="withdraw-btn" 
-          disabled={isTradeRunning}
-        >
-          Withdraw
-        </button>
+      <div className="balance-section">
+        <h3>Current Balance: ₹{userBalance.toFixed(2)}</h3>
       </div>
     </div>
   );

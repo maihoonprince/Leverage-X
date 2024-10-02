@@ -41,36 +41,63 @@ exports.getStockPrice = async (req, res) => {
 // Sell a stock and update the user's balance
 exports.sellStock = async (req, res) => {
   const { userId, stockName, quantity, sellPrice } = req.body;
+
   try {
+    // Find the user by their ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Find the stock in the user's stocks list
-    const stockIndex = user.stocks.findIndex(stock => stock.name === stockName);
+    // Find the stock in the user's stocks array
+    const stockIndex = user.stocks.findIndex(stock => stock.stockName === stockName);
     if (stockIndex === -1) {
       return res.status(404).json({ message: 'Stock not found in user portfolio' });
     }
 
-    // Update stock data
     const stock = user.stocks[stockIndex];
-    const investedBalance = stock.quantity * stock.buyPrice;
+
+    // Check if the user is selling the correct or valid quantity
+    if (stock.quantity < quantity) {
+      return res.status(400).json({ message: 'Insufficient stock quantity to sell' });
+    }
+
+    // Calculate invested balance for the quantity sold
+    const investedBalance = stock.buyPrice * quantity;
+
+    // Calculate the profit or loss based on the sell price
     const profitLoss = (sellPrice - stock.buyPrice) * quantity;
+
+    // Update the user's balance with the profit or loss from selling the stock
     const updatedBalance = user.balance + profitLoss;
 
-    // Remove stock after selling
-    user.stocks.splice(stockIndex, 1);
+    // Update the stock's sellPrice before removing it (optional, in case you want to track it)
+    stock.sellPrice = sellPrice;
+
+    // Remove the stock if the entire quantity is sold, otherwise update quantity
+    if (stock.quantity === quantity) {
+      // Remove the stock from the user's stocks array
+      user.stocks.splice(stockIndex, 1);
+    } else {
+      // Subtract the sold quantity from the stock's total quantity
+      stock.quantity -= quantity;
+      stock.investedAmount -= investedBalance; // Adjust investedAmount as well
+    }
+
+    // Update the user's balance
     user.balance = updatedBalance;
 
-    // Save updated user data
+    // Save the updated user data to the database
     await user.save();
 
+    // Respond with the updated balance
     res.json({ updatedBalance });
   } catch (error) {
+    console.error('Error selling stock:', error);
     res.status(500).json({ message: 'Error selling stock', error });
   }
 };
+
 
 // Withdraw user's balance
 exports.withdraw = async (req, res) => {
@@ -93,5 +120,26 @@ exports.withdraw = async (req, res) => {
     res.json({ message: 'Withdrawal successful', remainingBalance: user.balance });
   } catch (error) {
     res.status(500).json({ message: 'Error during withdrawal', error });
+  }
+};
+
+// Update user's balance
+exports.updateUserBalance = async (req, res) => {
+  const { userId } = req.params;
+  const { balance } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's balance
+    user.balance = balance;
+    await user.save();
+
+    res.status(200).json({ message: 'Balance updated successfully', balance: user.balance });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
 };
