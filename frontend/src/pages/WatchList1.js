@@ -79,6 +79,9 @@ const WatchList1 = () => {
         setCurrentBalance(response.data.updatedBalance);
         setUpdatedBalance(response.data.updatedBalance);
         setShowPopup(false);
+
+        localStorage.setItem('watchlistType', '1');
+
         navigate('/pnl', {
           state: {
             watchlistType: '1',  // Flag for WatchList1

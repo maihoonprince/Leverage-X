@@ -62,39 +62,46 @@ const WatchList2 = () => {
     setShowPopup(true);
   };
 
-  const handleBuy = async () => {
-    if (updatedBalance < 0) {
-      alert('Insufficient funds for this purchase.');
-      return;
-    }
+  // Modify your handleBuy function in WatchList2.js
+const handleBuy = async () => {
+  if (updatedBalance < 0) {
+    alert('Insufficient funds for this purchase.');
+    return;
+  }
 
-    try {
-      const response = await axios.post('http://localhost:8080/api/watchlist2/buy', {
-        stockName: selectedOption.name,
-        userId: userId,
-        quantity: quantity
+  try {
+    const response = await axios.post('http://localhost:8080/api/watchlist2/buy', {
+      stockName: selectedOption.name,
+      userId: userId,
+      quantity: quantity
+    });
+
+    if (response.status === 200) {
+      setCurrentBalance(response.data.updatedBalance);
+      setUpdatedBalance(response.data.updatedBalance);
+      setShowPopup(false);
+
+      // Store the watchlistType in localStorage
+      localStorage.setItem('watchlistType', '2');
+
+      // Navigate to the PnL page
+      navigate('/pnl', {
+        state: {
+          watchlistType: '2', // Flag for WatchList2
+          selectedOption,
+          quantity,
+          investedAmount,
+          updatedBalance: response.data.updatedBalance
+        }
       });
-
-      if (response.status === 200) {
-        setCurrentBalance(response.data.updatedBalance);
-        setUpdatedBalance(response.data.updatedBalance);
-        setShowPopup(false);
-        navigate('/pnl', {
-          state: {
-            watchlistType: '2', // Flag for WatchList2
-            selectedOption,
-            quantity,
-            investedAmount,
-            updatedBalance: response.data.updatedBalance
-          }
-        });
-      } else {
-        alert('Error purchasing stock.');
-      }
-    } catch (error) {
-      console.error('Error buying stock:', error);
+    } else {
+      alert('Error purchasing stock.');
     }
-  };
+  } catch (error) {
+    console.error('Error buying stock:', error);
+  }
+};
+
 
   return (
     <div className="watchlist-container">

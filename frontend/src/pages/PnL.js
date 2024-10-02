@@ -28,9 +28,13 @@ const PnL = () => {
   };
 
   // Fetch real-time price from the watchlist (1 or 2)
+  // Modify your fetchRealTimePrices function in PnL.js
   const fetchRealTimePrices = async () => {
     try {
-      const watchlistType = location.state?.watchlistType || '1'; // Default to WatchList1 if not provided
+      // First, try to get watchlistType from localStorage
+      const storedWatchlistType = localStorage.getItem('watchlistType');
+      const watchlistType = storedWatchlistType || location.state?.watchlistType || '1'; // Default to WatchList1 if none is found
+  
       const response = await axios.get(`http://localhost:8080/api/watchlist${watchlistType}`);
       setUpdatedStocks(response.data); // Ensure the response data contains the updated prices
     } catch (error) {
@@ -55,7 +59,9 @@ const PnL = () => {
 
   const handleSell = async (stockName, quantity) => {
     try {
-      const watchlistType = location.state?.watchlistType || '1'; // Get the correct watchlist type
+      const watchlistType = location.state?.watchlistType || localStorage.getItem('watchlistType') || '1'; // Ensure correct watchlistType
+      console.log({ userId, stockName, quantity, watchlistType }); // Check data being sent
+      
       const response = await axios.post('http://localhost:8080/api/users/sell', {
         userId,
         stockName,
@@ -72,6 +78,8 @@ const PnL = () => {
       console.error('Error selling stock:', error);
     }
   };
+  
+  
 
   return (
     <div className="pnl-container">
