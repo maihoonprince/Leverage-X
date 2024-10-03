@@ -65,15 +65,20 @@ const PnL = () => {
   
       if (response.status === 200) {
         // Update user balance after sell
-        if (!autoSell) {
-          setUserBalance((prevBalance) => prevBalance + (quantity * response.data.currentPrice)); // Manual sell: update balance correctly
+        setUserBalance(response.data.updatedBalance);
+        
+        // If balance falls below the threshold, it will be 0 after the sell
+        if (response.data.updatedBalance === 0) {
+          alert("Your balance has dropped below 90% of your plan's cost. Setting balance to ₹0.");
         }
+  
         fetchUserStocks(); // Fetch updated user stocks after sell
       }
     } catch (error) {
       console.error('Error selling stock:', error.message || error);
     }
   };
+  
   
   
   const autoSellIfNeeded = (stock, currentPrice) => {
