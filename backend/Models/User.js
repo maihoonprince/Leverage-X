@@ -37,6 +37,10 @@ const UserSchema = new Schema({
         enum: ['Rapid', 'Evolution', 'Prime'],
         default: null
     },
+    hasBoughtRapidPlan: {
+        type: Boolean,
+        default: false,  // User can buy the Rapid plan only once
+    },
     stocks: [{
         stockName: String,  // Store stock name
         buyPrice: Number,

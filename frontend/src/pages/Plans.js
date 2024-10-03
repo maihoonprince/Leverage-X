@@ -50,22 +50,17 @@ function Plans() {
     const handlePayment = async () => {
         try {
             const userId = localStorage.getItem('userId');
-            
-            if (selectedPlan === 'Rapid') {
-                // Store Rapid plan in the database
-                const response = await axios.post('http://localhost:8080/api/plans/purchase', { userId, plan: selectedPlan });
+            const response = await axios.post('http://localhost:8080/api/plans/purchase', { userId, plan: selectedPlan });
 
-                if (response.status === 200) {
-                    handleSuccess(response.data.msg);
-                    setShowPopup(false);
+            if (response.status === 200) {
+                handleSuccess(response.data.msg);
+                setShowPopup(false);
+                if (selectedPlan === 'Rapid') {
                     setHasBoughtRapid(true); // Mark Rapid plan as bought
                     navigate('/watchlist1');
+                } else if (selectedPlan === 'Evolution' || selectedPlan === 'Prime') {
+                    navigate('/watchlist2');
                 }
-            } else if (selectedPlan === 'Evolution' || selectedPlan === 'Prime') {
-                // Simply redirect for Evolution or Prime
-                handleSuccess("Plan selected successfully");
-                setShowPopup(false);
-                navigate('/watchlist2');
             }
         } catch (error) {
             handleError(error.response?.data?.msg || 'Payment failed');

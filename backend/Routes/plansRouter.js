@@ -3,7 +3,6 @@ const router = express.Router();
 const UserModel = require('../models/User');
 
 // POST: Select and Pay for a Plan
-// POST: Select and Pay for a Plan
 router.post('/purchase', async (req, res) => {
     try {
         const { userId, plan } = req.body;
@@ -20,12 +19,15 @@ router.post('/purchase', async (req, res) => {
             return res.status(400).json({ msg: 'You have already purchased the Rapid plan and cannot buy it again!' });
         }
 
-        // If the user buys the Rapid plan for the first time
+        // Process Rapid plan purchase
         if (plan === 'Rapid') {
-            user.hasBoughtRapidPlan = true;  // Set flag to true
+            user.hasBoughtRapidPlan = true;  // Prevent further Rapid plan purchases
             user.plan = plan;  // Store the plan
-            await user.save();
+        } else if (plan === 'Evolution' || plan === 'Prime') {
+            user.plan = plan;  // Store the plan for Evolution or Prime
         }
+
+        await user.save();
 
         res.status(200).json({ msg: 'Plan purchased successfully', hasBoughtRapidPlan: user.hasBoughtRapidPlan });
     } catch (error) {
@@ -33,7 +35,6 @@ router.post('/purchase', async (req, res) => {
         res.status(500).json({ msg: 'Server error' });
     }
 });
-
 
 // GET: Check if the user has already purchased a plan
 router.get('/user-plan/:userId', async (req, res) => {
@@ -46,7 +47,7 @@ router.get('/user-plan/:userId', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        res.status(200).json({ plan: user.plan });
+        res.status(200).json({ hasBoughtRapidPlan: user.hasBoughtRapidPlan });
     } catch (error) {
         res.status(500).json({ msg: 'Server error' });
     }
