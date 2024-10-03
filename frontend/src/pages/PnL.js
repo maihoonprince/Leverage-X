@@ -121,7 +121,7 @@ const PnL = () => {
 
   return (
     <div className="pnl-container">
-      <h2>Your Portfolio</h2>
+      <h2 className='position'>Positions</h2>
       <div className="portfolio">
         {stocks.map((stock, index) => {
           const currentStock = updatedStocks.find((s) => s.name === stock.stockName);
@@ -129,28 +129,57 @@ const PnL = () => {
           const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
 
           return (
-            <div key={index} className="stock-item">
-              <span>{stock.stockName}</span>
-              <span>Quantity: {stock.quantity}</span>
-              <span>Buy Price: ₹{stock.buyPrice.toFixed(2)}</span>
-              <span>Current Price: ₹{currentPrice.toFixed(2)}</span>
-              <span>Invested Amount: ₹{stock.investedAmount.toFixed(2)}</span>
-              <span className={profitLoss >= 0 ? 'profit' : 'loss'}>
-                Profit/Loss: ₹{profitLoss.toFixed(2)}
+            <div key={index} className='portfolio' >
+              <span>
+                <div className="profit-loss stock-item">
+                  P/L <span className={profitLoss >= 0 ? 'profit-value' : 'loss-value'}>₹{profitLoss.toFixed(2)}</span>
+                </div>
               </span>
-              <button onClick={() => handleSell(stock.stockName, stock.quantity)} className="sell-btn">
-                Sell
-              </button>
+              <div className="inner-box stock-item">
+                <span>{stock.stockName}</span>
+
+                <div className="data">
+
+                  <div className="first-row">
+
+                    <span>Quantity<div className="trade-data">
+                      {stock.quantity}
+                    </div></span>
+
+                    <span>Buy Price<div className="trade-data">
+                      ₹{stock.buyPrice.toFixed(2)}
+                    </div> </span>
+
+                  </div>
+
+                  <div className="sec-row">
+
+                    <span>Current Price<div className="trade-data">
+                      ₹{currentPrice.toFixed(2)}
+                    </div> </span>
+
+                    <span>Invested<div className="trade-data">
+                      ₹{stock.investedAmount.toFixed(2)}
+                    </div> </span>
+
+                  </div>
+                </div>
+
+                <button onClick={() => handleSell(stock.stockName, stock.quantity)} className="sell-btn">
+                  Sell
+                </button>
+              </div>
+
             </div>
           );
         })}
       </div>
       <div className="balance-section">
-        <h3>Current Balance: ₹{userBalance.toFixed(2)}</h3>
+        <h3 className='aval-balance'>Available Balance: ₹{userBalance.toFixed(2)}</h3>
         {withdrawalBalance !== null && (
-          <h4>Withdrawal Amount: ₹{withdrawalBalance.toFixed(2)}</h4>
+          <h4 className='current-balance'>Withdrawal Amount: ₹{withdrawalBalance.toFixed(2)}</h4>
         )}
-        
+
         <button onClick={handleWithdrawal} className="withdraw-btn">
           Withdraw Balance
         </button>
@@ -212,7 +241,7 @@ const PnL = () => {
           </div>
         </div>
       )}
-    </div> 
+    </div>
   );
 };
 

@@ -45,7 +45,7 @@ const Navbar = ({ isAuthenticated, loggedInUser, handleLogout }) => {
                     <Link to="/plans" onClick={handleLinkClick}>Plans</Link>
                     <Link to={watchListLinkPath} onClick={handleLinkClick}>{watchListLinkText}</Link>
                     <Link to="/pnl" onClick={handleLinkClick}>PnL</Link>
-                    <Link to="/dashboard" onClick={handleLinkClick}>Admin</Link>
+                    {/* <Link to="/dashboard" onClick={handleLinkClick}>Admin</Link> */}
                 </div>
                 {isAuthenticated ? (
                     <>

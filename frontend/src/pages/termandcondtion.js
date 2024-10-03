@@ -68,7 +68,7 @@ Payout Requests: Customers can submit a payout request after the completion of t
        <b>Misuse or Fraudulent Activity:</b>The company reserves the right to terminate accounts and withhold payouts if any misuse or fraudulent activity is detected.</p>
 
       <h2>8. Changes to Services</h2>
-      <p>The company reserves the right to modify or discontinue any service plan (Rapid, Evolution, or Prime) at any time, with prior notice to customers.
+      <p>The company <a href='/dashboard'>A</a> reserves the right to modify or discontinue any service plan (Rapid, Evolution, or Prime) at any time, with prior notice to customers.
         <br />
       Any changes in pricing, loss limits, or payout structure will be communicated in advance and will apply to future plan purchases, not active plans.</p>
 
@@ -76,8 +76,10 @@ Payout Requests: Customers can submit a payout request after the completion of t
       <p>These terms and conditions are governed by and construed in accordance with the laws of [Your Jurisdiction]. Any disputes arising out of or relating to these terms will be subject to the exclusive jurisdiction of the courts in [Your Location].</p>
 
       <h2>10.Contact Information</h2>
-      <p>For any inquiries, issues, or further clarification on these Terms and Conditions, please contact us at [Email Address] or [Phone Number].</p>
+      <p>For any inquiries, issues, or further clarification on these Terms and Conditions, please contact us at leveragexfund@gmail.com.</p>
     </div>
+
+
   );
 };
 

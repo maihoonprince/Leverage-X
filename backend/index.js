@@ -28,7 +28,7 @@ app.use('/api/watchlist1', watchList1Routes);
 app.use('/api/watchlist2', watchList2Routes);
 app.use('/api', pnlRoute);
 
-// Server start
+// Server start frontend
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
