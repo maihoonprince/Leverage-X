@@ -79,6 +79,7 @@ function Plans() {
                         <th>Minimum Trading Days</th>
                         <th>Margin</th>
                         <th>Plan Cost</th>
+                        <th>Life Cycle</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -90,6 +91,7 @@ function Plans() {
                             <td>5 Days</td>
                             <td>10X</td>
                             <td>{plan === 'Rapid' ? '1000' : plan === 'Evolution' ? '5000' : '10,000'}</td>
+                            <td>{plan === 'Rapid' ? '1 Times' : plan === 'Evolution' ? 'Unlimited' : 'Umlimited'}</td>
                             <td>
                                 <button
                                     className={userPlan === plan ? "disabled-btn" : "buy-now-btn"}
@@ -103,6 +105,24 @@ function Plans() {
                     ))}
                 </tbody>
             </table>
+            <section className='section-plan'>
+                <h2>Choose Your Plan</h2>
+                <div className='plan-amt'>
+                    <div className='amt'>
+                       <h3>Rapid Plan (Rs 1,000)</h3>
+                        <p>Perfect for traders who want to start small and fast. For just Rs 1,000, you can join our Rapid Plan and start trading with leveraged capital. This plan is ideal for newer traders looking to test the waters or experienced traders who want quick access to funds with a low entry barrier.</p>
+                    </div>
+                    <div className='amt'>
+                       <h3>Evolution Plan (Rs 5,000)</h3>
+                        <p>Designed for those who are ready to take their trading to the next level, the Evolution Plan gives you a larger amount of capital and more flexibility. With an affordable Rs 5,000 upfront cost, this plan is ideal for traders who are confident in their strategies and are looking to grow their trading portfolios.</p>
+                    </div>
+                    <div className='amt'>
+                        <h3>Prime Plan (Rs 10,000)</h3>
+                        <p>For serious traders aiming to trade with large amounts of capital and maximize their profit potential, the Prime Plan offers the highest funding level. At Rs 10,000, this plan is built for experienced traders who want to significantly scale up their operations and have access to substantial funding. If you’re ready to trade like a pro, the Prime Plan is for you.</p>
+                    </div>
+                </div>
+
+            </section>
 
             {/* Popup Overlay */}
             {showPopup && (

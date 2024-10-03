@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../styles/Navbar.css';
 
+import logo from "../Assets/logo/logo.png";
+
 const Navbar = ({ isAuthenticated, loggedInUser, handleLogout }) => {
     const [selectedPlan, setSelectedPlan] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
     const location = useLocation();
 
-    // Retrieve the selected plan from localStorage when the component mounts or route changes
     useEffect(() => {
         const savedPlan = localStorage.getItem('selectedPlan');
         setSelectedPlan(savedPlan);
-    }, [location]);  // Re-run this effect when the route changes
+    }, [location]);
 
-    // Determine which WatchList page to show in the navbar based on the selected plan
     const watchListLinkText = selectedPlan === 'Rapid' 
         ? 'WatchList1' 
         : selectedPlan === 'Evolution' || selectedPlan === 'Prime' 
@@ -25,23 +26,45 @@ const Navbar = ({ isAuthenticated, loggedInUser, handleLogout }) => {
         ? '/watchlist2' 
         : '/watchlist';
 
+    const handleMenuToggle = () => {
+        setMenuOpen(!menuOpen);
+    };
+
+    const handleLinkClick = () => {
+        setMenuOpen(false); // Close menu on link click
+    };
+
     return (
         <nav>
-            <div className="logo">L<span>X</span></div>
-            <div className="nav-links">
-                <Link to="/home">Home</Link>
-                <Link to="/plans">Plans</Link>
-                <Link to={watchListLinkPath}>{watchListLinkText}</Link> {/* Update WatchList link dynamically */}
-                <Link to="/pnl">PnL</Link>
-                <Link to="/dashboard">Admin</Link>
+            <div className="logo">
+                <img src={logo} alt="Logo" />
+            </div>
+            <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
+                <div className='menu-items'>
+                    <Link to="/home" onClick={handleLinkClick}>Home</Link>
+                    <Link to="/plans" onClick={handleLinkClick}>Plans</Link>
+                    <Link to={watchListLinkPath} onClick={handleLinkClick}>{watchListLinkText}</Link>
+                    <Link to="/pnl" onClick={handleLinkClick}>PnL</Link>
+                    <Link to="/dashboard" onClick={handleLinkClick}>Admin</Link>
+                </div>
                 {isAuthenticated ? (
                     <>
                         <span>{loggedInUser}</span>
-                        <button onClick={handleLogout}>Logout</button>
+                        <button className='log' onClick={handleLogout}>Logout</button>
                     </>
                 ) : (
-                    <Link to="/login">Login</Link>
+                    <Link className='log' to="/login" onClick={handleLinkClick}>Login</Link>
                 )}
+            </div>
+
+            <div className="hamburger" onClick={handleMenuToggle}>
+                {menuOpen ? (
+                    <span className="cross">✖</span>
+                ) : (
+                    <span className="bar"></span>
+                )}
+                <span className="bar "></span>
+                <span className="bar "></span>
             </div>
         </nav>
     );

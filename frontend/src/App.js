@@ -19,6 +19,9 @@ import PnL from './pages/PnL';
 import AdminDashboard from "./pages/Dashboard";
 import WatchList from './pages/WatchList';
 
+import TermsAndConditions from './pages/termandcondtion';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('loggedInUser'));
@@ -59,6 +62,9 @@ function App() {
         <Route path='/signup' element={<Signup />} />
 
         <Route path='/home' element={<Home />} />
+
+        <Route path='/term' element={<TermsAndConditions />} />
+        <Route path='/privacy' element={<PrivacyPolicy />} />
         
         {/* <Route path='/home' element={<PrivateRoute element={<Home />} />} /> */}
         <Route path='/plans' element={<PrivateRoute element={<Plans />} />} />
