@@ -119,6 +119,45 @@ router.post('/sell', async (req, res) => {
   }
 });
 
+// Route to handle user withdrawal
+router.post('/withdraw', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Plan costs (as discussed)
+    const planCosts = {
+      Rapid: 10000,
+      Evolution: 50000,
+      Prime: 100000,
+    };
+
+    const userPlan = user.plan;  // Assuming the user's plan is stored in `user.plan`
+    const planCost = planCosts[userPlan];
+    
+    if (user.balance <= planCost) {
+      return res.status(400).json({ message: 'Not enough balance to withdraw. Balance must be more than the plan cost.' });
+    }
+
+    // Calculate withdrawal balance
+    const withdrawalBalance = user.balance - planCost;
+
+    // Perform the withdrawal (e.g., store it, send a notification, etc.)
+    user.balance = 0;  // Set balance to zero after withdrawal
+
+    await user.save();
+    res.status(200).json({
+      message: 'Withdrawal successful',
+      withdrawalBalance,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error processing withdrawal', error: error.message });
+  }
+});
+
+
 // Fetch stock prices for both WatchLists (used in PnL and WatchList)
 router.get('/:userId/stock-prices', getUserStockPrices);
 

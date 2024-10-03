@@ -7,6 +7,7 @@ const PnL = () => {
   const [stocks, setStocks] = useState([]);
   const [userBalance, setUserBalance] = useState(0);
   const [updatedStocks, setUpdatedStocks] = useState([]);
+  const [withdrawalBalance, setWithdrawalBalance] = useState(null); // State for withdrawal balance
   const userId = localStorage.getItem('userId');
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const PnL = () => {
     }
   };
 
-  // Fetch real-time price from the watchlist (1 or 2)
+  // Fetch real-time prices from the watchlist (1 or 2)
   const fetchRealTimePrices = async () => {
     try {
       const storedWatchlistType = localStorage.getItem('watchlistType');
@@ -38,15 +39,6 @@ const PnL = () => {
       console.error('Error fetching real-time prices:', error);
     }
   };
-
-  useEffect(() => {
-    fetchUserStocks();
-    fetchRealTimePrices();
-    const interval = setInterval(() => {
-      fetchRealTimePrices(); // Update prices every second
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const calculateProfitLoss = (buyPrice, currentPrice, quantity) => {
     return (currentPrice - buyPrice) * quantity;
@@ -64,55 +56,53 @@ const PnL = () => {
       });
   
       if (response.status === 200) {
-        // Update user balance after sell
         setUserBalance(response.data.updatedBalance);
-        
-        // If balance falls below the threshold, it will be 0 after the sell
         if (response.data.updatedBalance === 0) {
           alert("Your balance has dropped below 90% of your plan's cost. Setting balance to ₹0.");
         }
-  
-        fetchUserStocks(); // Fetch updated user stocks after sell
+        fetchUserStocks();
       }
     } catch (error) {
       console.error('Error selling stock:', error.message || error);
     }
   };
-  
-  
-  
+
   const autoSellIfNeeded = (stock, currentPrice) => {
-    if (stock.quantity === 0) return; // Prevent auto-sell if quantity is zero
-  
+    if (stock.quantity === 0) return;
+
     const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
-  
-    // Calculate the auto-sell threshold using your new formula
     const threshold = 0.1 * ((stock.quantity * stock.buyPrice) + userBalance); // 10% of (quantity * stock buy price + current balance)
-  
-    // Auto-sell condition: when profit/loss (negative) is less than or equal to the threshold
+    
     if (profitLoss <= -threshold) {
-      console.log(`Auto-selling ${stock.stockName} due to profit/loss threshold met.`);
-      
-      // Disable button and prevent multiple auto-sells
       if (stock.isBeingSold) return;
       stock.isBeingSold = true;
   
-      // Perform auto-sell and set balance to zero after successful sell
-      handleSell(stock.stockName, stock.quantity, true) // Pass true for auto-sell
-        .then(() => {
-          console.log('Auto-sell successful');
-          // After successful auto-sell, set user balance to zero in UI
-          setUserBalance(0);
-        })
-        .catch((error) => {
-          console.error('Auto-sell error:', error.message || error);
-        })
-        .finally(() => {
-          stock.isBeingSold = false; // Reset after handling
-        });
+      handleSell(stock.stockName, stock.quantity, true)
+        .then(() => setUserBalance(0))
+        .catch((error) => console.error('Auto-sell error:', error.message || error))
+        .finally(() => stock.isBeingSold = false);
     }
   };
-  
+
+  const handleWithdrawal = async () => {
+    try {
+      const response = await axios.post('http://localhost:8080/api/users/withdraw', { userId });
+      if (response.status === 200) {
+        setWithdrawalBalance(response.data.withdrawalBalance);
+        setUserBalance(0); // Set user balance to zero after withdrawal
+        alert(`Withdrawal successful! Your withdrawal balance is ₹${response.data.withdrawalBalance}`);
+      }
+    } catch (error) {
+      console.error('Error processing withdrawal:', error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserStocks();
+    fetchRealTimePrices();
+    const interval = setInterval(() => fetchRealTimePrices(), 1000); // Update prices every second
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="pnl-container">
@@ -123,7 +113,6 @@ const PnL = () => {
           const currentPrice = currentStock ? currentStock.price : stock.buyPrice;
           const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
 
-          // Auto-sell check
           autoSellIfNeeded(stock, currentPrice);
 
           return (
@@ -136,10 +125,7 @@ const PnL = () => {
               <span className={profitLoss >= 0 ? 'profit' : 'loss'}>
                 Profit/Loss: ₹{profitLoss.toFixed(2)}
               </span>
-              <button
-                onClick={() => handleSell(stock.stockName, stock.quantity)}
-                className="sell-btn"
-              >
+              <button onClick={() => handleSell(stock.stockName, stock.quantity)} className="sell-btn">
                 Sell
               </button>
             </div>
@@ -148,6 +134,12 @@ const PnL = () => {
       </div>
       <div className="balance-section">
         <h3>Current Balance: ₹{userBalance.toFixed(2)}</h3>
+        {withdrawalBalance !== null && (
+          <h4>Withdrawal Amount: ₹{withdrawalBalance.toFixed(2)}</h4>
+        )}
+        <button onClick={handleWithdrawal} className="withdraw-btn">
+          Withdraw Balance
+        </button>
       </div>
     </div>
   );
