@@ -8,6 +8,15 @@ const PnL = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [updatedStocks, setUpdatedStocks] = useState([]);
   const [withdrawalBalance, setWithdrawalBalance] = useState(null); // State for withdrawal balance
+  const [showWithdrawalPopup, setShowWithdrawalPopup] = useState(false); // State for popup visibility
+  const [withdrawalDetails, setWithdrawalDetails] = useState({
+    accountHolderName: '',
+    accountNo: '',
+    ifscCode: '',
+    panCardNo: '',
+    upiId: '',
+    withdrawalId: ''
+  }); // State for withdrawal form details
   const userId = localStorage.getItem('userId');
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,11 +37,10 @@ const PnL = () => {
     }
   };
 
-  // Fetch real-time prices from the watchlist (1 or 2)
   const fetchRealTimePrices = async () => {
     try {
       const storedWatchlistType = localStorage.getItem('watchlistType');
-      const watchlistType = storedWatchlistType || location.state?.watchlistType || '1'; // Default to WatchList1 if none is found
+      const watchlistType = storedWatchlistType || location.state?.watchlistType || '1';
       const response = await axios.get(`http://localhost:8080/api/watchlist${watchlistType}`);
       setUpdatedStocks(response.data);
     } catch (error) {
@@ -52,14 +60,11 @@ const PnL = () => {
         stockName,
         quantity,
         watchlistType,
-        autoSell, // Pass the auto-sell flag
+        autoSell,
       });
-  
+
       if (response.status === 200) {
         setUserBalance(response.data.updatedBalance);
-        if (response.data.updatedBalance === 0) {
-          alert("Your balance has dropped below 90% of your plan's cost. Setting balance to ₹0.");
-        }
         fetchUserStocks();
       }
     } catch (error) {
@@ -67,40 +72,50 @@ const PnL = () => {
     }
   };
 
-  const autoSellIfNeeded = (stock, currentPrice) => {
-    if (stock.quantity === 0) return;
-
-    const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
-    const threshold = 0.1 * ((stock.quantity * stock.buyPrice) + userBalance); // 10% of (quantity * stock buy price + current balance)
-    
-    if (profitLoss <= -threshold) {
-      if (stock.isBeingSold) return;
-      stock.isBeingSold = true;
-  
-      handleSell(stock.stockName, stock.quantity, true)
-        .then(() => setUserBalance(0))
-        .catch((error) => console.error('Auto-sell error:', error.message || error))
-        .finally(() => stock.isBeingSold = false);
+  const handleWithdrawal = async () => {
+    try {
+      // Calculate withdrawal balance before showing the popup
+      const response = await axios.post('http://localhost:8080/api/users/withdraw', {
+        userId,
+        ...withdrawalDetails // Include withdrawal details in the request
+      });
+      if (response.status === 200) {
+        setWithdrawalBalance(response.data.withdrawalBalance);
+        setShowWithdrawalPopup(true); // Show the popup after calculating balance
+      }
+    } catch (error) {
+      console.error('Error calculating withdrawal balance:', error.message || error);
     }
   };
 
-  const handleWithdrawal = async () => {
+  const handleSubmitWithdrawal = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/users/withdraw', { userId });
+      const response = await axios.post('http://localhost:8080/api/users/withdraw', {
+        userId,
+        ...withdrawalDetails // Include withdrawal details in the request
+      });
       if (response.status === 200) {
-        setWithdrawalBalance(response.data.withdrawalBalance);
-        setUserBalance(0); // Set user balance to zero after withdrawal
+        setUserBalance(0); // Reset balance after withdrawal
         alert(`Withdrawal successful! Your withdrawal balance is ₹${response.data.withdrawalBalance}`);
+        setShowWithdrawalPopup(false); // Close the popup after submission
       }
     } catch (error) {
       console.error('Error processing withdrawal:', error.message || error);
     }
   };
 
+  const handleCancelWithdrawal = () => {
+    setShowWithdrawalPopup(false); // Close the popup on cancel
+  };
+
+  const handleInputChange = (e) => {
+    setWithdrawalDetails({ ...withdrawalDetails, [e.target.name]: e.target.value });
+  };
+
   useEffect(() => {
     fetchUserStocks();
     fetchRealTimePrices();
-    const interval = setInterval(() => fetchRealTimePrices(), 1000); // Update prices every second
+    const interval = setInterval(() => fetchRealTimePrices(), 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -112,8 +127,6 @@ const PnL = () => {
           const currentStock = updatedStocks.find((s) => s.name === stock.stockName);
           const currentPrice = currentStock ? currentStock.price : stock.buyPrice;
           const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
-
-          autoSellIfNeeded(stock, currentPrice);
 
           return (
             <div key={index} className="stock-item">
@@ -137,11 +150,69 @@ const PnL = () => {
         {withdrawalBalance !== null && (
           <h4>Withdrawal Amount: ₹{withdrawalBalance.toFixed(2)}</h4>
         )}
+        
         <button onClick={handleWithdrawal} className="withdraw-btn">
           Withdraw Balance
         </button>
       </div>
-    </div>
+
+      {showWithdrawalPopup && (
+        <div className="overlay">
+          <div className="popup">
+            <h3>Withdrawal Details</h3>
+            {/* Display the calculated withdrawal balance */}
+            <h4>Withdrawal Amount: ₹{withdrawalBalance ? withdrawalBalance.toFixed(2) : 'Calculating...'}</h4>
+
+            <input
+              type="text"
+              name="accountHolderName"
+              placeholder="Account Holder Name"
+              value={withdrawalDetails.accountHolderName}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="accountNo"
+              placeholder="Account No."
+              value={withdrawalDetails.accountNo}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="ifscCode"
+              placeholder="IFSC Code"
+              value={withdrawalDetails.ifscCode}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="panCardNo"
+              placeholder="Pan Card No."
+              value={withdrawalDetails.panCardNo}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="upiId"
+              placeholder="UPI ID"
+              value={withdrawalDetails.upiId}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="withdrawalId"
+              placeholder="Withdrawal ID"
+              value={withdrawalDetails.withdrawalId}
+              onChange={handleInputChange}
+            />
+            <div className="popup-buttons">
+              <button onClick={handleSubmitWithdrawal}>Submit</button>
+              <button onClick={handleCancelWithdrawal}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div> 
   );
 };
 

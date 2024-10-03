@@ -41,3 +41,13 @@
 .balance-section {
   margin-top: 20px;
 }
+
+.overlay {
+  display: flex;
+}
+
+.popup{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
