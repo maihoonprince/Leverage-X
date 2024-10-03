@@ -4,7 +4,7 @@ import axios from 'axios';
 import TradingView from '../components/TradingView';
 import '../styles/WatchList.css';
 
-const WatchList2 = () => {
+const WatchList1 = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -12,6 +12,9 @@ const WatchList2 = () => {
   const [investedAmount, setInvestedAmount] = useState(0);
   const [updatedBalance, setUpdatedBalance] = useState(0);
   const [stocks, setStocks] = useState([]);
+  const [showGraph, setShowGraph] = useState(false); // State to show TradingView
+  const [selectedStockForGraph, setSelectedStockForGraph] = useState(null); // Selected stock for graph
+  
   const navigate = useNavigate();
 
   const userId = localStorage.getItem('userId');
@@ -47,9 +50,9 @@ const WatchList2 = () => {
     fetchStocks();
     fetchBalance();
     const interval = setInterval(() => {
-      fetchStocks(); // Fetch updated WatchList2 stock prices
+      fetchStocks(); // Fetch updated WatchList1 stock prices
     }, 1000);
-
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -62,56 +65,62 @@ const WatchList2 = () => {
     setShowPopup(true);
   };
 
-  // Modify your handleBuy function in WatchList2.js
-const handleBuy = async () => {
-  if (updatedBalance < 0) {
-    alert('Insufficient funds for this purchase.');
-    return;
-  }
+  const handleGraph = (stock) => {
+    setSelectedStockForGraph(stock); // Set the selected stock for the graph
+    setShowGraph(true); // Show TradingView component
+  };
 
-  try {
-    const response = await axios.post('http://localhost:8080/api/watchlist2/buy', {
-      stockName: selectedOption.name,
-      userId: userId,
-      quantity: quantity
-    });
+  const handleCloseGraph = () => {
+    setShowGraph(false); // Close the TradingView component
+  };
 
-    if (response.status === 200) {
-      setCurrentBalance(response.data.updatedBalance);
-      setUpdatedBalance(response.data.updatedBalance);
-      setShowPopup(false);
-
-      // Store the watchlistType in localStorage
-      localStorage.setItem('watchlistType', '2');
-
-      // Navigate to the PnL page
-      navigate('/pnl', {
-        state: {
-          watchlistType: '2', // Flag for WatchList2
-          selectedOption,
-          quantity,
-          investedAmount,
-          updatedBalance: response.data.updatedBalance
-        }
-      });
-    } else {
-      alert('Error purchasing stock.');
+  const handleBuy = async () => {
+    if (updatedBalance < 0) {
+      alert("Insufficient funds for this purchase.");
+      return;
     }
-  } catch (error) {
-    console.error('Error buying stock:', error);
-  }
-};
 
+    try {
+      const response = await axios.post('http://localhost:8080/api/watchlist2/buy', {
+        stockName: selectedOption.name,
+        userId: userId,
+        quantity: quantity
+      });
+
+      if (response.status === 200) {
+        setCurrentBalance(response.data.updatedBalance);
+        setUpdatedBalance(response.data.updatedBalance);
+        setShowPopup(false);
+
+        localStorage.setItem('watchlistType', '2');
+
+        navigate('/pnl', {
+          state: {
+            watchlistType: '2',  // Flag for WatchList1
+            selectedOption,
+            quantity,
+            investedAmount,
+            updatedBalance: response.data.updatedBalance,
+          }
+        });
+      } else {
+        alert('Error purchasing stock.');
+      }
+    } catch (error) {
+      console.error('Error buying stock:', error);
+    }
+  };
 
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Forex Exchange Options</h2>
+        <h2>Currency Options</h2>
         <div className="options">
           {stocks.map((option, index) => (
             <div key={index} className="option">
               <span>{option.name}</span>
               <span>₹{option.price.toFixed(2)}</span>
+              <button className='graph' onClick={() => handleGraph(option)}>Graph</button>
               <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button>
             </div>
           ))}
@@ -135,11 +144,15 @@ const handleBuy = async () => {
         </div>
       )}
 
-      <div className="main-content">
-        <TradingView />
-      </div>
+      {showGraph && (
+        <div className="graph-container">
+          <button className="close-btn" onClick={handleCloseGraph}>✖</button>
+          <TradingView stock={selectedStockForGraph} />
+        </div>
+      )}
+
     </div>
   );
 };
 
-export default WatchList2;
+export default WatchList1;

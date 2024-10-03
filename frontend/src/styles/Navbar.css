@@ -5,6 +5,8 @@ nav {
     align-items: center;
     padding: 1rem;
     background-color: #0e0f12;
+    position: fixed;
+    width: 90vw;
 }
 
 nav .menu-items{

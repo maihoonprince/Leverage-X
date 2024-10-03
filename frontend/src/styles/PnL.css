@@ -1,4 +1,8 @@
 /* Container */
+/* *{
+  font-family: "Poppins", sans-serif;
+} */
+
 .pnl-container {
   max-width: 900px;
   margin: 0 auto;
@@ -6,6 +10,7 @@
   background-color: #000000;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(169, 254, 42, 0.1);
+  padding-top: 15vw;
 }
 
 /* Headings */
@@ -36,14 +41,10 @@ h3, h4 {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-color: #000000;
+  background-color: #181515;
   padding: 15px;
   border-radius: 8px;
   transition: box-shadow 0.3s ease;
-}
-
-.profit-loss {
-  border-bottom: 1px solid #3b8221;
 }
 
 .stock-item:hover {
@@ -51,12 +52,12 @@ h3, h4 {
 }
 
 .stock-item span {
-  font-size: 16px;
-  color: #555;
+  font-size: 12rem;
+  /* color: #f1f1f1; */
 }
 
 .stock-item span:first-child {
-  font-weight: bold;
+  font-weight: lighter;
 }
 
 /* Buttons */
@@ -72,6 +73,8 @@ h3, h4 {
 }
 
 .sell-btn {
+  max-width: 100%;
+  width: 55%;
   background-color: #e74c3c;
   color: #fff;
 }
@@ -128,7 +131,7 @@ h3, h4 {
 }
 
 .popup {
-  background-color: #fff;
+  background-color: #333;
   padding: 20px;
   border-radius: 10px;
   max-width: 400px;
@@ -138,6 +141,7 @@ h3, h4 {
 }
 
 .popup h3 {
+  border:1px solid #fff;
   font-size: 22px;
   color: #333;
   margin-bottom: 20px;
@@ -208,17 +212,19 @@ h3, h4 {
   }
 
   .stock-item span {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 25px;
+    font-weight: lighter;
   }
 
-  .inner-box {
-    border-bottom: 1px solid #3b8221;
+  .trade-data{
+    font-size: 1.1rem;
+    /* margin-bottom: 20px; */
   }
 
   .profit-loss {
-    font-size: 18px;
+    font-size: 2rem;
     color: #fff;
+    font-weight: lighter;
   }
 
   h3 {
@@ -235,14 +241,11 @@ h3, h4 {
     gap: 10px;
   }
 
-  .sell-btn, 
-  .withdraw-btn {
-    width: 100%;
-  }
 
   .data {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     gap: 15px;
   }
 
@@ -255,7 +258,7 @@ h3, h4 {
   .sec-row {
     display: flex;
     align-items: center;
-    gap: 115px;
+    gap: 100px;
   }
 
   .aval-balance {

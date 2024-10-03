@@ -12,6 +12,9 @@ const WatchList1 = () => {
   const [investedAmount, setInvestedAmount] = useState(0);
   const [updatedBalance, setUpdatedBalance] = useState(0);
   const [stocks, setStocks] = useState([]);
+  const [showGraph, setShowGraph] = useState(false); // State to show TradingView
+  const [selectedStockForGraph, setSelectedStockForGraph] = useState(null); // Selected stock for graph
+  
   const navigate = useNavigate();
 
   const userId = localStorage.getItem('userId');
@@ -62,6 +65,15 @@ const WatchList1 = () => {
     setShowPopup(true);
   };
 
+  const handleGraph = (stock) => {
+    setSelectedStockForGraph(stock); // Set the selected stock for the graph
+    setShowGraph(true); // Show TradingView component
+  };
+
+  const handleCloseGraph = () => {
+    setShowGraph(false); // Close the TradingView component
+  };
+
   const handleBuy = async () => {
     if (updatedBalance < 0) {
       alert("Insufficient funds for this purchase.");
@@ -102,12 +114,13 @@ const WatchList1 = () => {
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Forex Exchange Options</h2>
+        <h2>Currency Options</h2>
         <div className="options">
           {stocks.map((option, index) => (
             <div key={index} className="option">
               <span>{option.name}</span>
               <span>₹{option.price.toFixed(2)}</span>
+              <button className='graph' onClick={() => handleGraph(option)}>Graph</button>
               <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button>
             </div>
           ))}
@@ -131,9 +144,13 @@ const WatchList1 = () => {
         </div>
       )}
 
-      <div className="main-content">
-        <TradingView />
-      </div>
+      {showGraph && (
+        <div className="graph-container">
+          <button className="close-btn" onClick={handleCloseGraph}>✖</button>
+          <TradingView stock={selectedStockForGraph} />
+        </div>
+      )}
+
     </div>
   );
 };
