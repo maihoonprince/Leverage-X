@@ -32,7 +32,7 @@ function Signup() {
             return handleError('All fields are required');
         }
         try {
-            const url = `http://localhost:8080/auth/signup`;
+            const url = `https://leverage-x-12.onrender.com/auth/signup`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
