@@ -7,7 +7,7 @@ body {
 }
 
 .home-container {
-    /* padding: 0 5px; */
+    padding: 0 5px;
 }
 
 /* Header */
@@ -17,6 +17,7 @@ body {
     align-items: center;
     padding: 60px 0;
     flex-wrap: wrap;
+    margin-top: 60px;
 }
 
 .header-content h1 {

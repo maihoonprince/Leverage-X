@@ -11,9 +11,9 @@ const signup = async (req, res) => {
                 .json({ message: 'Email already exists, please login', success: false });
         }
 
-        const userModel = new UserModel({ fullName, email, mobile, aadhaar, pan, password });
-        userModel.password = await bcrypt.hash(password, 10);
-        await userModel.save();
+        const newUser = new User({ fullName, email, mobile, aadhaar, pan, password });
+        newUser.password = await bcrypt.hash(password, 10);
+        await newUser.save();
         res.status(201)
             .json({
                 message: "Signup successful",
@@ -67,7 +67,6 @@ const login = async (req, res) => {
             });
     }
 };
-
 
 module.exports = {
     signup,

@@ -114,7 +114,7 @@ const WatchList1 = () => {
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Currency Options</h2>
+        <h2 className='currency-opt'>Currency Options</h2>
         <div className="options">
           {stocks.map((option, index) => (
             <div key={index} className="option">
