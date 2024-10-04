@@ -1,4 +1,4 @@
-const Stock = require('../models/stockModel');
+const Stock = require('../Models/stockModel');
 
 // Update stock price for a specific watchlist
 exports.updateStockPrice = async (req, res) => {

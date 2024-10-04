@@ -1,7 +1,7 @@
 // controllers/pnlController.js
-const User = require('../models/userModel');
-const Watchlist1 = require('../models/watchList1Model');
-const Watchlist2 = require('../models/watchList2Model');
+const User = require('../Models/userModel');
+const Watchlist1 = require('../Models/watchList1Model');
+const Watchlist2 = require('../Models/watchList2Model');
 
 // Fetch the user's purchased stock data
 exports.getPnLData = async (req, res) => {
