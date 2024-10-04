@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const authRouter = require('./Routes/authRoute');
-const plansRouter = require('./Routes/plansRouter');
+const plansRouter = require('./Routes/plansRouter.js');
 const stockRoutes = require('./Routes/stockRoutes.js');
 const userRoutes = require('./Routes/userRoutes.js');
 const watchList1Routes = require('./Routes/watchList1Routes.js');
