@@ -51,10 +51,10 @@ function App() {
   return (
     <div className="App">
       <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
-      <Navbar 
-        isAuthenticated={isAuthenticated} 
-        loggedInUser={loggedInUser} 
-        handleLogout={handleLogout} 
+      <Navbar
+        isAuthenticated={isAuthenticated}
+        loggedInUser={loggedInUser}
+        handleLogout={handleLogout}
       />
       <Routes>
         <Route path='/' element={<Navigate to="/login" />} />
@@ -62,22 +62,20 @@ function App() {
         <Route path='/signup' element={<Signup />} />
 
         <Route path='/home' element={<Home />} />
-
-        <Route path='/term' element={<TermsAndConditions />} />
-        <Route path='/privacy' element={<PrivacyPolicy />} />
-        
-        {/* <Route path='/home' element={<PrivateRoute element={<Home />} />} /> */}
         <Route path='/plans' element={<PrivateRoute element={<Plans />} />} />
 
-        <Route path='/watchlist' element={<PrivateRoute element={<WatchList />} />} />
+        {/* Allow public access to WatchList */}
+        <Route path='/watchlist' element={<WatchList />} />
+
+        {/* Keep WatchList1 and WatchList2 private */}
         <Route path='/watchlist1' element={<PrivateRoute element={<WatchList1 />} />} />
         <Route path='/watchlist2' element={<PrivateRoute element={<WatchList2 />} />} />
 
         <Route path='/pnl' element={<PrivateRoute element={<PnL />} />} />
-
         <Route path="/dashboard" element={<AdminDashboard />} />
       </Routes>
-      <Footer/>
+
+      <Footer />
     </div>
   );
 }

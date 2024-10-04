@@ -3,12 +3,14 @@
   padding: 40px 20px;
   text-align: center;
   background-color: #0e0f12;
+  padding-top: 22vh;
+  overflow-x: auto; /* Enable horizontal scroll */
 }
 
 .plans-title {
   font-size: 36px;
   font-weight: bold;
-  background: linear-gradient(to right,rgb(16, 174, 16), rgb(223, 223, 223));
+  background: linear-gradient(to right, rgb(16, 174, 16), rgb(223, 223, 223));
   background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 50px;
@@ -18,7 +20,8 @@
 }
 
 .plans-table {
-  width: 80%;
+  width: 100%;
+  min-width: 900px; /* Minimum width to allow scrolling */
   margin: 0 auto;
   border-collapse: collapse;
   background-color: #0e0f12;
@@ -31,18 +34,16 @@
 .plans-table th,
 .plans-table td {
   padding: 20px;
-  /* text-align: center; */
   border-bottom: 1px solid #dddddd;
   font-size: 18px;
   color: white;
-  align-items: center;
-  justify-content: center;
 }
-.plans-table tr{
+
+.plans-table tr {
   background-color: #0e0f12;
 }
 
-.plans-table tr td{
+.plans-table tr td {
   justify-content: center;
   align-items: center;
 }
@@ -98,22 +99,23 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgb(0, 0, 0);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
 .popup-content {
-  background-color: #fff;
+  position: relative;
+  background-color: #00000000;
   padding: 40px;
   text-align: center;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   max-width: 400px;
   width: 100%;
-  position: relative;
   transition: transform 0.3s ease;
   transform: scale(1);
   opacity: 1;
@@ -132,8 +134,8 @@
 }
 
 .popup img {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   margin-bottom: 20px;
   border-radius: 10px;
   border: 2px solid #ddd;
@@ -143,7 +145,7 @@
 .popup .popup-btn,
 .popup .cancel-btn {
   margin: 15px 10px;
-  padding: 12px 25px;
+  padding: 12px 18px;
   font-size: 16px;
   font-weight: 600;
   border: none;
@@ -162,37 +164,36 @@
   transform: scale(1.05);
 }
 
+.qr-h2 {
+  color: #fff;
+}
+
+.qr-p {
+  color: #fff;
+  font-size: 18px;
+}
+
+.qr-pq {
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .popup .cancel-btn {
-  background-color: #dc3545;
-  color: white;
+  position: absolute;
+  top: 100%;
+  right: 40%;
+  background-color: #dc354600;
+  font-size: 30px;
+  color: rgb(255, 246, 246);
 }
 
 .popup .cancel-btn:hover {
-  background-color: #c82333;
+  background-color: #c8233300;
   transform: scale(1.05);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .plans-table {
-    width: 95%;
-  }
-
-  .plans-table th, .plans-table td {
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  .plans-title {
-    font-size: 28px;
-  }
-
-  .popup-content {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
   .plans-title {
     font-size: 24px;
     margin-bottom: 20px;
@@ -210,6 +211,15 @@
 
   .popup-content {
     padding: 15px;
+  }
+
+  .popup .cancel-btn {
+    position: absolute;
+    top: 100%;
+    right: 40%;
+    background-color: #dc354600;
+    font-size: 24px;
+    color: white;
   }
 
   .popup-content h2 {

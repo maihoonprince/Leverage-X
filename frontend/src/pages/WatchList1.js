@@ -114,12 +114,12 @@ const WatchList1 = () => {
   return (
     <div className="watchlist-container">
       <div className="sidebar">
-        <h2>Currency Options</h2>
+        <h2 className='currency-opt'>Currency Options</h2>
         <div className="options">
           {stocks.map((option, index) => (
             <div key={index} className="option">
               <span>{option.name}</span>
-              <span>₹{option.price.toFixed(2)}</span>
+              <span className='pad-ing'>₹{option.price.toFixed(2)}</span>
               <button className='graph' onClick={() => handleGraph(option)}>Graph</button>
               <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button>
             </div>

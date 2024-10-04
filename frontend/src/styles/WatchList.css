@@ -11,13 +11,19 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12vh;
   height: 100vh;
 }
 
 .sidebar h2 {
   text-align: center;
   margin-bottom: 20px;
+}
+
+.currency-opt{
+  background: linear-gradient(to right,rgb(16, 174, 16), rgb(223, 223, 223));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-top: 9px;
 }
 
 .options {

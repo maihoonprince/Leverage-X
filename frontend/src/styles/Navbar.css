@@ -1,11 +1,13 @@
 /* General styles for the navigation */
 nav {
+    position: fixed;
+    overflow: hidden;
+    top: 0%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
     background-color: #0e0f12;
-    position: fixed;
     width: 90vw;
 }
 

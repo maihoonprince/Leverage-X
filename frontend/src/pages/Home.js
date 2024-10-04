@@ -75,6 +75,7 @@ const Home = () => {
                     <button className="tab active">Evaluation</button>
                     <button className="tab">Rapid</button>
                 </div> */}
+                <div className="plans-container">
                 <table className="plans-table">
                     <thead>
                         <tr>
@@ -120,6 +121,7 @@ const Home = () => {
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </section>
 
             {/* Features */}

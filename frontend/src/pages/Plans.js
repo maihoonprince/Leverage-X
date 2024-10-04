@@ -72,57 +72,61 @@ function Plans() {
     return (
         <div className="plans-container">
             <h1 className="plans-title">Membership Plans</h1>
-            <p>Current Plan: {currentPlan ? currentPlan : 'No Plan Selected'}</p> {/* Display current plan */}
+            {/* <p>Current Plan: {currentPlan ? currentPlan : 'No Plan Selected'}</p>  */}
 
-            <table className="plans-table">
-                <thead>
-                    <tr>
-                        <th>Plan's</th>
-                        <th>Trading Balance</th>
-                        <th>Minimum Trading Days</th>
-                        <th>Margin</th>
-                        <th>Plan Cost</th>
-                        <th>Life Cycle</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {['Rapid', 'Evolution', 'Prime'].map((plan, index) => (
-                        <tr key={index}>
-                            <td>{plan}</td>
-                            <td>{plan === 'Rapid' ? '10,000' : plan === 'Evolution' ? '50,000' : '1,00,000'}</td>
-                            <td>5 Days</td>
-                            <td>10X</td>
-                            <td>{plan === 'Rapid' ? '1000' : plan === 'Evolution' ? '5000' : '10,000'}</td>
-                            <td>{plan === 'Rapid' ? '1 Time' : 'Unlimited'}</td>
-                            <td>
-                                <button
-                                    className={hasBoughtRapid && plan === 'Rapid' ? "disabled-btn" : "buy-now-btn"}
-                                    onClick={() => buyPlan(plan)}
-                                    disabled={hasBoughtRapid && plan === 'Rapid'}
-                                >
-                                    {hasBoughtRapid && plan === 'Rapid' ? 'Plan Used' : 'Buy Now'}
-                                </button>
-                            </td>
+            <div className="plans-container">
+                <table className="plans-table">
+                    <thead>
+                        <tr>
+                            <th>Plan's</th>
+                            <th>Trading Balance</th>
+                            <th>Minimum Trading Days</th>
+                            <th>Margin</th>
+                            <th>Plan Cost</th>
+                            <th>Life Cycle</th>
+                            <th>Action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className='membership-plan'>
+                        {['Rapid', 'Evolution', 'Prime'].map((plan, index) => (
+                            <tr key={index}>
+                                <td>{plan}</td>
+                                <td>{plan === 'Rapid' ? '10,000' : plan === 'Evolution' ? '50,000' : '1,00,000'}</td>
+                                <td>5 Days</td>
+                                <td>10X</td>
+                                <td>{plan === 'Rapid' ? '1000' : plan === 'Evolution' ? '5000' : '10,000'}</td>
+                                <td>{plan === 'Rapid' ? '1 Time' : 'Unlimited'}</td>
+                                <td>
+                                    <button
+                                        className={hasBoughtRapid && plan === 'Rapid' ? "disabled-btn" : "buy-now-btn"}
+                                        onClick={() => buyPlan(plan)}
+                                        disabled={hasBoughtRapid && plan === 'Rapid'}
+                                    >
+                                        {hasBoughtRapid && plan === 'Rapid' ? 'Plan Used' : 'Buy Now'}
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
 
             {showPopup && (
                 <div className="popup-overlay">
                     <div className="popup">
-                        <h2>Pay for {selectedPlan}</h2>
-                        <p>You Have to Pay: {selectedPlan === 'Rapid' ? '1000' : selectedPlan === 'Evolution' ? '5000' : '10,000'}</p>
+                        <h2 className='qr-h2'>Pay for {selectedPlan}</h2>
+                        <p className='qr-p'>You Have to Pay: {selectedPlan === 'Rapid' ? '1000' : selectedPlan === 'Evolution' ? '5000' : '10,000'}</p>
                         <img src={qrcode} alt="QR Code" className="qr-image" />
+                        <p className='qr-p'> Or</p>
+                        <p className='qr-p qr-pq'>leveragexfund@okhdfcbank</p>
                         <div className="popup-actions">
-                            <button className="done-btn" onClick={handlePayment}>Done</button>
-                            <button className="cancel-btn" onClick={() => setShowPopup(false)}>Cancel</button>
+                            <button className="done-btn done-bttn" onClick={handlePayment}>Done</button>
+                            <button className="cancel-btn" onClick={() => setShowPopup(false)}>X</button>
                         </div>
                     </div>
                 </div>
             )}
-
             <ToastContainer />
         </div>
     );

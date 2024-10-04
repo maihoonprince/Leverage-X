@@ -143,7 +143,9 @@ const PnL = () => {
       </div>
       <div className="balance-section">
         <h3>Current Balance: ₹{userBalance.toFixed(2)}</h3>
+        <button className='withdraw'>Withdraw</button>
       </div>
+      
     </div>
   );
 };

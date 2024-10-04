@@ -11,6 +11,10 @@ table {
     margin-bottom: 20px;
 }
 
+.done-bttn{
+    font-size: 20px;
+}
+
 table th, table td {
     border: 1px solid #ddd;
     padding: 8px;

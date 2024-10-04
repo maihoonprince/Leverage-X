@@ -5,33 +5,37 @@ import '../styles/Navbar.css';
 import logo from "../Assets/logo/logo.png";
 
 const Navbar = ({ isAuthenticated, loggedInUser, handleLogout }) => {
-    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [watchlistType, setWatchlistType] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const location = useLocation();
 
+    // UseEffect to get the selected watchlistType from localStorage
     useEffect(() => {
-        const savedPlan = localStorage.getItem('selectedPlan');
-        setSelectedPlan(savedPlan);
+        const savedWatchlistType = localStorage.getItem('watchlistType');
+        setWatchlistType(savedWatchlistType);
     }, [location]);
 
-    const watchListLinkText = selectedPlan === 'Rapid' 
-        ? 'WatchList1' 
-        : selectedPlan === 'Evolution' || selectedPlan === 'Prime' 
-        ? 'WatchList2' 
-        : 'WatchList';
+    const watchListLinkText = watchlistType === '1'
+        ? 'WatchList1'
+        : watchlistType === '2'
+            ? 'WatchList2'
+            : 'WatchList';
 
-    const watchListLinkPath = selectedPlan === 'Rapid' 
-        ? '/watchlist1' 
-        : selectedPlan === 'Evolution' || selectedPlan === 'Prime' 
-        ? '/watchlist2' 
-        : '/watchlist';
+    const watchListLinkPath = watchlistType === '1'
+        ? '/watchlist1'
+        : watchlistType === '2'
+            ? '/watchlist2'
+            : '/watchlist';
 
+
+    // Toggle for the hamburger menu
     const handleMenuToggle = () => {
         setMenuOpen(!menuOpen);
     };
 
+    // Close the menu when a link is clicked
     const handleLinkClick = () => {
-        setMenuOpen(false); // Close menu on link click
+        setMenuOpen(false);
     };
 
     return (
