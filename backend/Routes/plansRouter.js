@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../models/userModel');
+const UserModel = require('../Models/userModel');
 
 // POST: Select and Pay for a Plan
 router.post('/purchase', async (req, res) => {
@@ -8,7 +8,7 @@ router.post('/purchase', async (req, res) => {
         const { userId, plan } = req.body;
 
         // Find the user by ID
-        const user = await UserModel.findById(userId);
+        const user = await User.findById(userId);
         
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
@@ -39,7 +39,7 @@ router.post('/purchase', async (req, res) => {
 // GET: Check if the user has already purchased a plan
 router.get('/user-plan/:userId', async (req, res) => {
     try {
-        const user = await UserModel.findById(req.params.userId);
+        const user = await User.findById(req.params.userId);
 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });

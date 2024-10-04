@@ -11,7 +11,7 @@ const {
   sellStock,
   getUserStockPrices,
 } = require('../Controllers/userController');
-const User = require('../models/userModel'); // Ensure correct model is imported
+const User = require('../Models/userModel'); // Ensure correct model is imported
 const router = express.Router();
 
 const BASE_URL = process.env.BASE_URL;

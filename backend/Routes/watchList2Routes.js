@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const WatchList2Stock = require('../models/watchList2Model'); // Correct model
+const WatchList2Stock = require('../Models/watchList2Model'); // Correct model
 const { startPriceFluctuation, buyStock } = require('../Controllers/watchList2Controller'); // Import fluctuation logic
 
 // Fetch all stocks for WatchList2
