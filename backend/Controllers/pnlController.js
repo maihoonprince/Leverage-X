@@ -1,5 +1,5 @@
 // controllers/pnlController.js
-const User = require('../models/User');
+const User = require('../models/userModel');
 const Watchlist1 = require('../models/watchList1Model');
 const Watchlist2 = require('../models/watchList2Model');
 

@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/userModel');
 
 const getUserStockPrices = async (req, res) => {
     const { userId } = req.params;

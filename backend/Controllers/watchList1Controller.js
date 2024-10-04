@@ -1,5 +1,5 @@
 const Stock = require('../models/watchList1Model');
-const User = require('../models/User');
+const User = require('../models/userModel');
 
 // Function to generate small alternating increments or decrements
 function getSmallIncrementOrDecrement(currentPrice, targetPrice) {

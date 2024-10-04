@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/userModel');
 
 const updateStockPrices = async (userId, stockName, price, watchListType) => {
     const user = await User.findById(userId);

@@ -1,5 +1,5 @@
 const Stock = require('../models/stockModel');
-const User = require('../models/User');
+const User = require('../models/userModel');
 
 // Fetch all stocks
 const getStocks = async (req, res) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../models/User');
+const UserModel = require('../models/userModel');
 
 // POST: Select and Pay for a Plan
 router.post('/purchase', async (req, res) => {
