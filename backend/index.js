@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const authRouter = require('./Routes/authRouter');
+const authRouter = require('./Routes/authRoute');
 const plansRouter = require('./Routes/plansRouter');
 const stockRoutes = require('./Routes/stockRoutes.js');
 const userRoutes = require('./Routes/userRoutes.js');
