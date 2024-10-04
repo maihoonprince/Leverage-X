@@ -14,6 +14,8 @@ const {
 const User = require('../models/User'); // Ensure correct model is imported
 const router = express.Router();
 
+const BASE_URL = process.env.BASE_URL;
+
 // Route to get all users (for admin or general use)
 router.get('/', getUsers);
 
@@ -53,7 +55,7 @@ router.post('/stocks/sell', sellStock);
 // Helper function to get current stock price
 const getCurrentStockPrice = async (stockName, watchlistType = 1) => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/watchlist${watchlistType}`);
+    const response = await axios.get(`${BASE_URL}/api/watchlist${watchlistType}`);
     const stock = response.data.find((s) => s.name === stockName);
     return stock ? stock.price : null;
   } catch (error) {
