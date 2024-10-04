@@ -3,7 +3,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const AuthRouter = require('./Routes/AuthRouter');
+
+const authRouter = require('./Routes/authRouter');
 const plansRouter = require('./Routes/plansRouter');
 const stockRoutes = require('./Routes/stockRoutes.js');
 const userRoutes = require('./Routes/userRoutes.js');
@@ -20,7 +21,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Route Definitions
-app.use('/auth', AuthRouter);
+app.use('/auth', authRouter);
 app.use('/api/plans', plansRouter);
 app.use('/api/stocks', stockRoutes);
 app.use('/api/users', userRoutes); // Route for user-related actions like balance, stocks
