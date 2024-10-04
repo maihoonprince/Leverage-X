@@ -10,7 +10,8 @@ import qrcode from "../Assets/WhatsApp Image 2024-10-03 at 18.58.39_5c2012ec.jpg
 function Plans() {
     const [selectedPlan, setSelectedPlan] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
-    const [hasBoughtRapid, setHasBoughtRapid] = useState(false); // Track Rapid plan status
+    const [hasBoughtRapid, setHasBoughtRapid] = useState(false);
+    const [currentPlan, setCurrentPlan] = useState(null); // Store current plan
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,12 +24,12 @@ function Plans() {
             return;
         }
 
-        // Fetch the user's plan status (for Rapid plan)
         const fetchUserPlanStatus = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/api/plans/user-plan/${userId}`);
                 if (response.data) {
-                    setHasBoughtRapid(response.data.hasBoughtRapidPlan); // Set Rapid plan status
+                    setHasBoughtRapid(response.data.hasBoughtRapidPlan);  // Set Rapid plan status
+                    setCurrentPlan(response.data.plan);  // Set current plan
                 }
             } catch (error) {
                 console.error("Error fetching user plan status:", error);
@@ -55,8 +56,9 @@ function Plans() {
             if (response.status === 200) {
                 handleSuccess(response.data.msg);
                 setShowPopup(false);
+                setCurrentPlan(selectedPlan); // Set the current plan after purchase
                 if (selectedPlan === 'Rapid') {
-                    setHasBoughtRapid(true); // Mark Rapid plan as bought
+                    setHasBoughtRapid(true);
                     navigate('/watchlist1');
                 } else if (selectedPlan === 'Evolution' || selectedPlan === 'Prime') {
                     navigate('/watchlist2');
@@ -70,6 +72,8 @@ function Plans() {
     return (
         <div className="plans-container">
             <h1 className="plans-title">Membership Plans</h1>
+            <p>Current Plan: {currentPlan ? currentPlan : 'No Plan Selected'}</p> {/* Display current plan */}
+
             <table className="plans-table">
                 <thead>
                     <tr>

@@ -7,16 +7,6 @@ const PnL = () => {
   const [stocks, setStocks] = useState([]);
   const [userBalance, setUserBalance] = useState(0);
   const [updatedStocks, setUpdatedStocks] = useState([]);
-  const [withdrawalBalance, setWithdrawalBalance] = useState(null); // State for withdrawal balance
-  const [showWithdrawalPopup, setShowWithdrawalPopup] = useState(false); // State for popup visibility
-  const [withdrawalDetails, setWithdrawalDetails] = useState({
-    accountHolderName: '',
-    accountNo: '',
-    ifscCode: '',
-    panCardNo: '',
-    upiId: '',
-    withdrawalId: ''
-  }); // State for withdrawal form details
   const userId = localStorage.getItem('userId');
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,16 +27,26 @@ const PnL = () => {
     }
   };
 
+  // Fetch real-time price from the watchlist (1 or 2)
   const fetchRealTimePrices = async () => {
     try {
       const storedWatchlistType = localStorage.getItem('watchlistType');
-      const watchlistType = storedWatchlistType || location.state?.watchlistType || '1';
+      const watchlistType = storedWatchlistType || location.state?.watchlistType || '1'; // Default to WatchList1 if none is found
       const response = await axios.get(`http://localhost:8080/api/watchlist${watchlistType}`);
       setUpdatedStocks(response.data);
     } catch (error) {
       console.error('Error fetching real-time prices:', error);
     }
   };
+
+  useEffect(() => {
+    fetchUserStocks();
+    fetchRealTimePrices();
+    const interval = setInterval(() => {
+      fetchRealTimePrices(); // Update prices every second
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const calculateProfitLoss = (buyPrice, currentPrice, quantity) => {
     return (currentPrice - buyPrice) * quantity;
@@ -60,187 +60,90 @@ const PnL = () => {
         stockName,
         quantity,
         watchlistType,
-        autoSell,
+        autoSell, // Pass the auto-sell flag
       });
-
+  
       if (response.status === 200) {
-        setUserBalance(response.data.updatedBalance);
-        fetchUserStocks();
+        // Update user balance after sell
+        if (!autoSell) {
+          setUserBalance((prevBalance) => prevBalance + (quantity * response.data.currentPrice)); // Manual sell: update balance correctly
+        }
+        fetchUserStocks(); // Fetch updated user stocks after sell
       }
     } catch (error) {
       console.error('Error selling stock:', error.message || error);
     }
   };
-
-  const handleWithdrawal = async () => {
-    try {
-      // Calculate withdrawal balance before showing the popup
-      const response = await axios.post('http://localhost:8080/api/users/withdraw', {
-        userId,
-        ...withdrawalDetails // Include withdrawal details in the request
-      });
-      if (response.status === 200) {
-        setWithdrawalBalance(response.data.withdrawalBalance);
-        setShowWithdrawalPopup(true); // Show the popup after calculating balance
-      }
-    } catch (error) {
-      console.error('Error calculating withdrawal balance:', error.message || error);
+  
+  
+  const autoSellIfNeeded = (stock, currentPrice) => {
+    if (stock.quantity === 0) return; // Prevent auto-sell if quantity is zero
+  
+    const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
+  
+    // Calculate the auto-sell threshold using your new formula
+    const threshold = 0.1 * ((stock.quantity * stock.buyPrice) + userBalance); // 10% of (quantity * stock buy price + current balance)
+  
+    // Auto-sell condition: when profit/loss (negative) is less than or equal to the threshold
+    if (profitLoss <= -threshold) {
+      console.log(`Auto-selling ${stock.stockName} due to profit/loss threshold met.`);
+      
+      // Disable button and prevent multiple auto-sells
+      if (stock.isBeingSold) return;
+      stock.isBeingSold = true;
+  
+      // Perform auto-sell and set balance to zero after successful sell
+      handleSell(stock.stockName, stock.quantity, true) // Pass true for auto-sell
+        .then(() => {
+          console.log('Auto-sell successful');
+          // After successful auto-sell, set user balance to zero in UI
+          setUserBalance(0);
+        })
+        .catch((error) => {
+          console.error('Auto-sell error:', error.message || error);
+        })
+        .finally(() => {
+          stock.isBeingSold = false; // Reset after handling
+        });
     }
   };
-
-  const handleSubmitWithdrawal = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/api/users/withdraw', {
-        userId,
-        ...withdrawalDetails // Include withdrawal details in the request
-      });
-      if (response.status === 200) {
-        setUserBalance(0); // Reset balance after withdrawal
-        alert(`Withdrawal successful! Your withdrawal balance is ₹${response.data.withdrawalBalance}`);
-        setShowWithdrawalPopup(false); // Close the popup after submission
-      }
-    } catch (error) {
-      console.error('Error processing withdrawal:', error.message || error);
-    }
-  };
-
-  const handleCancelWithdrawal = () => {
-    setShowWithdrawalPopup(false); // Close the popup on cancel
-  };
-
-  const handleInputChange = (e) => {
-    setWithdrawalDetails({ ...withdrawalDetails, [e.target.name]: e.target.value });
-  };
-
-  useEffect(() => {
-    fetchUserStocks();
-    fetchRealTimePrices();
-    const interval = setInterval(() => fetchRealTimePrices(), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  
 
   return (
     <div className="pnl-container">
-      <h2 className='position'>Positions</h2>
+      <h2>Your Portfolio</h2>
       <div className="portfolio">
         {stocks.map((stock, index) => {
           const currentStock = updatedStocks.find((s) => s.name === stock.stockName);
           const currentPrice = currentStock ? currentStock.price : stock.buyPrice;
           const profitLoss = calculateProfitLoss(stock.buyPrice, currentPrice, stock.quantity);
 
+          // Auto-sell check
+          autoSellIfNeeded(stock, currentPrice);
+
           return (
-            <div key={index} className='portfolio' >
-              <span>
-                <div className="profit-loss stock-item">
-                  P/L <span className={profitLoss >= 0 ? 'profit-value' : 'loss-value'}>₹{profitLoss.toFixed(2)}</span>
-                </div>
+            <div key={index} className="stock-item">
+              <span>{stock.stockName}</span>
+              <span>Quantity: {stock.quantity}</span>
+              <span>Buy Price: ₹{stock.buyPrice.toFixed(2)}</span>
+              <span>Current Price: ₹{currentPrice.toFixed(2)}</span>
+              <span>Invested Amount: ₹{stock.investedAmount.toFixed(2)}</span>
+              <span className={profitLoss >= 0 ? 'profit' : 'loss'}>
+                Profit/Loss: ₹{profitLoss.toFixed(2)}
               </span>
-              <div className="inner-box stock-item">
-                <span>{stock.stockName}</span>
-
-                <div className="data">
-
-                  <div className="first-row">
-
-                    <span>Quantity<div className="trade-data">
-                      {stock.quantity}
-                    </div></span>
-
-                    <span>Buy Price<div className="trade-data">
-                      ₹{stock.buyPrice.toFixed(2)}
-                    </div> </span>
-
-                  </div>
-
-                  <div className="sec-row">
-
-                    <span>Current Price<div className="trade-data">
-                      ₹{currentPrice.toFixed(2)}
-                    </div> </span>
-
-                    <span>Invested<div className="trade-data">
-                      ₹{stock.investedAmount.toFixed(2)}
-                    </div> </span>
-
-                  </div>
-                </div>
-
-                <button onClick={() => handleSell(stock.stockName, stock.quantity)} className="sell-btn">
-                  Sell
-                </button>
-              </div>
-
+              <button
+                onClick={() => handleSell(stock.stockName, stock.quantity)}
+                className="sell-btn"
+              >
+                Sell
+              </button>
             </div>
           );
         })}
       </div>
       <div className="balance-section">
-        <h3 className='aval-balance'>Available Balance: ₹{userBalance.toFixed(2)}</h3>
-        {withdrawalBalance !== null && (
-          <h4 className='current-balance'>Withdrawal Amount: ₹{withdrawalBalance.toFixed(2)}</h4>
-        )}
-
-        <button onClick={handleWithdrawal} className="withdraw-btn">
-          Withdraw Balance
-        </button>
+        <h3>Current Balance: ₹{userBalance.toFixed(2)}</h3>
       </div>
-
-      {showWithdrawalPopup && (
-        <div className="overlay">
-          <div className="popup">
-            <h3>Withdrawal Details</h3>
-            {/* Display the calculated withdrawal balance */}
-            <h4>Withdrawal Amount: ₹{withdrawalBalance ? withdrawalBalance.toFixed(2) : 'Calculating...'}</h4>
-
-            <input
-              type="text"
-              name="accountHolderName"
-              placeholder="Account Holder Name"
-              value={withdrawalDetails.accountHolderName}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="accountNo"
-              placeholder="Account No."
-              value={withdrawalDetails.accountNo}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="ifscCode"
-              placeholder="IFSC Code"
-              value={withdrawalDetails.ifscCode}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="panCardNo"
-              placeholder="Pan Card No."
-              value={withdrawalDetails.panCardNo}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="upiId"
-              placeholder="UPI ID"
-              value={withdrawalDetails.upiId}
-              onChange={handleInputChange}
-            />
-            <input
-              type="text"
-              name="withdrawalId"
-              placeholder="Withdrawal ID"
-              value={withdrawalDetails.withdrawalId}
-              onChange={handleInputChange}
-            />
-            <div className="popup-buttons">
-              <button onClick={handleSubmitWithdrawal}>Submit</button>
-              <button onClick={handleCancelWithdrawal}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -62,38 +62,42 @@ const getCurrentStockPrice = async (stockName, watchlistType = 1) => {
   }
 };
 
-// Add to your sell route in userRoutes.js
-const planThresholds = {
-  Rapid: 9000, // 90% of ₹10,000
-  Evolution: 45000, // 90% of ₹50,000
-  Prime: 90000 // 90% of ₹1,00,000
-};
 
+// Direct sell stock route
+// Direct sell stock route
 router.post('/sell', async (req, res) => {
   const { userId, stockName, quantity, watchlistType, autoSell = false } = req.body;
 
   try {
+    console.log("Received sell request:", { userId, stockName, quantity, watchlistType, autoSell });
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const stock = user.stocks.find((s) => s.stockName === stockName);
     if (!stock) {
+      console.log("Stock not found in portfolio");
       return res.status(404).json({ message: 'Stock not found in portfolio' });
     }
 
     if (stock.quantity < quantity) {
+      console.log("Not enough stock to sell");
       return res.status(400).json({ message: 'Not enough stock to sell' });
     }
 
     const currentPrice = await getCurrentStockPrice(stockName, watchlistType);
     if (!currentPrice) {
+      console.log("Unable to retrieve stock price");
       return res.status(500).json({ message: 'Unable to retrieve stock price' });
     }
 
+    // Calculate sale amount
     const saleAmount = currentPrice * quantity;
-    
-    // Manual sell: update the balance with sale amount
-    if (!autoSell) {
+
+    if (autoSell) {
+      // Auto-sell: set balance to 0
+      user.balance = 0;
+    } else {
+      // Manual sell: update the balance with sale amount
       user.balance += saleAmount;
     }
 
@@ -104,59 +108,18 @@ router.post('/sell', async (req, res) => {
       user.stocks = user.stocks.filter((s) => s.stockName !== stockName);
     }
 
-    // Check if the user's current balance falls below 90% of the plan cost
-    const userPlan = user.plan;  // Assuming the user's plan is stored in `user.plan`
-    const threshold = planThresholds[userPlan];
-    
-    if (user.balance < threshold) {
-      user.balance = 0;  // Set balance to 0 if it's below 90% of the plan's cost
-    }
-
-    await user.save();
-    res.status(200).json({ message: 'Stock sold successfully', updatedBalance: user.balance, currentPrice });
+    await user.save(); // Save updated user data
+    console.log("Stock sold successfully", { updatedBalance: user.balance });
+    res.status(200).json({ message: 'Stock sold successfully', updatedBalance: user.balance });
   } catch (error) {
+    console.error('Error selling stock:', error);
     res.status(500).json({ message: 'Error selling stock', error: error.message });
   }
 });
 
-// Route to handle user withdrawal
-router.post('/withdraw', async (req, res) => {
-  const { userId } = req.body;
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Plan costs (as discussed)
-    const planCosts = {
-      Rapid: 10000,
-      Evolution: 50000,
-      Prime: 100000,
-    };
-
-    const userPlan = user.plan;  // Assuming the user's plan is stored in `user.plan`
-    const planCost = planCosts[userPlan];
-    
-    if (user.balance <= planCost) {
-      return res.status(400).json({ message: 'Not enough balance to withdraw. Balance must be more than the plan cost.' });
-    }
-
-    // Calculate withdrawal balance
-    const withdrawalBalance = user.balance - planCost;
-
-    // Perform the withdrawal (e.g., store it, send a notification, etc.)
-    user.balance = 0;  // Set balance to zero after withdrawal
-
-    await user.save();
-    res.status(200).json({
-      message: 'Withdrawal successful',
-      withdrawalBalance,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error processing withdrawal', error: error.message });
-  }
-});
-
+ 
 
 // Fetch stock prices for both WatchLists (used in PnL and WatchList)
 router.get('/:userId/stock-prices', getUserStockPrices);
