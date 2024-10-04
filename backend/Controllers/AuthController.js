@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const UserModel = require("../models/userModel");
+const User = require("../models/userModel");
 
 const signup = async (req, res) => {
     try {
         const { fullName, email, mobile, aadhaar, pan, password } = req.body;
-        const user = await UserModel.findOne({ email });  // Check if email already exists
+        const user = await User.findOne({ email });  // Check if email already exists
         if (user) {
             return res.status(409)
                 .json({ message: 'Email already exists, please login', success: false });
@@ -31,7 +31,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await UserModel.findOne({ email });  // Search by email
+        const user = await User.findOne({ email });  // Search by email
         const errorMsg = 'Auth failed, email or password is incorrect';
         if (!user) {
             return res.status(403)
