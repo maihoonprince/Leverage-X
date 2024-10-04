@@ -30,7 +30,7 @@ const WatchList1 = () => {
       const response = await axios.get('http://localhost:8080/api/watchlist1');
       setStocks(response.data);
     } catch (error) {
-      console.error('Error fetching WatchList1 stocks:', error);
+      console.error('Error fetching WatchList2 stocks:', error);
     }
   };
 
@@ -119,7 +119,7 @@ const WatchList1 = () => {
           {stocks.map((option, index) => (
             <div key={index} className="option">
               <span>{option.name}</span>
-              <span className='pad-ing'>₹{option.price.toFixed(2)}</span>
+              <span>₹{option.price.toFixed(2)}</span>
               <button className='graph' onClick={() => handleGraph(option)}>Graph</button>
               <button className="buy-btn" onClick={() => handleBuyClick(option)}>Buy</button>
             </div>
